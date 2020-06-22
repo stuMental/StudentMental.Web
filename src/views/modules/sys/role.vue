@@ -36,6 +36,12 @@
         label="角色名称">
       </el-table-column>
       <el-table-column
+        prop="deptName"
+        header-align="center"
+        align="center"
+        label="所属部门">
+      </el-table-column>
+      <el-table-column
         prop="remark"
         header-align="center"
         align="center"

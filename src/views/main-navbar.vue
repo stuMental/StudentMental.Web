@@ -2,14 +2,14 @@
   <nav class="site-navbar" :class="'site-navbar--' + navbarLayoutType">
     <div class="site-navbar__header">
       <h1 class="site-navbar__brand" @click="$router.push({ name: 'home' })">
-        <a class="site-navbar__brand-lg" href="javascript:;">慧眼课堂</a>
-        <a class="site-navbar__brand-mini" href="javascript:;">慧眼</a>
+        <a class="site-navbar__brand-lg" href="javascript:;">{{webname}}</a>
+        <a class="site-navbar__brand-mini" href="javascript:;"></a>
       </h1>
     </div>
     <div class="site-navbar__body clearfix">
       <el-menu
         class="site-navbar__menu"
-        mode="horizontal">
+        mode="horizontal" >
         <el-menu-item class="site-navbar__switch" index="0" @click="sidebarFold = !sidebarFold">
           <icon-svg name="zhedie"></icon-svg>
         </el-menu-item>
@@ -17,13 +17,13 @@
       <el-menu
         class="site-navbar__menu site-navbar__menu--right"
         mode="horizontal">
-        <el-menu-item index="1" @click="$router.push({ name: 'theme' })">
+        <!-- <el-menu-item index="1" @click="$router.push({ name: 'theme' })">
           <template slot="title">
             <el-badge >
               <icon-svg name="shezhi" class="el-icon-setting"></icon-svg>
             </el-badge>
           </template>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item class="site-navbar__avatar" index="3">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
@@ -48,6 +48,7 @@
   export default {
     data () {
       return {
+        webname:"",
         updatePassowrdVisible: false
       }
     },
@@ -70,7 +71,18 @@
         get () { return this.$store.state.user.name }
       }
     },
+    created(){
+      this.getwebname()
+    },
     methods: {
+getwebname(){
+       this.$http({
+        url: this.$http.adornUrl("/webname"),
+        method: "get"
+      }).then(({ data }) => {
+        this.webname=data.msg
+      });
+    },
       // 修改密码
       updatePasswordHandle () {
         this.updatePassowrdVisible = true

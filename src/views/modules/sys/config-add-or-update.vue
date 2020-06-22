@@ -5,7 +5,17 @@
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <el-form-item label="参数名" prop="paramKey">
-        <el-input v-model="dataForm.paramKey" placeholder="参数名"></el-input>
+        <el-input :disabled="!dataForm.id?false:true" v-model="dataForm.paramKey" placeholder="参数名"></el-input>
+      </el-form-item>
+      <el-form-item label="类型" prop="paramValue">
+       <el-select v-model="dataForm.paramType" filterable placeholder="请选择类型">
+          <el-option
+            v-for="item in options"
+            :key="item.paramKey"
+            :label="item.paramValue"
+            :value="item.paramKey"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="参数值" prop="paramValue">
         <el-input v-model="dataForm.paramValue" placeholder="参数值"></el-input>
@@ -26,10 +36,12 @@
     data () {
       return {
         visible: false,
+        options:[],
         dataForm: {
           id: 0,
           paramKey: '',
           paramValue: '',
+          paramType:'',
           remark: ''
         },
         dataRule: {
@@ -44,6 +56,22 @@
     },
     methods: {
       init (id) {
+          this.options = [];
+         this.$http({
+        url: this.$http.adornUrl("/sys/config/typelist"),
+        methods: "get"
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          data.data.forEach(element => {
+            if(element.paramKey){
+              this.options.push(element)
+            }
+          });
+          
+        } else {
+          this.options = [];
+        }
+      });
         this.dataForm.id = id || 0
         this.visible = true
         this.$nextTick(() => {
@@ -56,6 +84,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.dataForm.paramKey = data.config.paramKey
+                this.dataForm.paramType=data.config.paramType
                 this.dataForm.paramValue = data.config.paramValue
                 this.dataForm.remark = data.config.remark
               }
@@ -74,6 +103,7 @@
                 'id': this.dataForm.id || undefined,
                 'paramKey': this.dataForm.paramKey,
                 'paramValue': this.dataForm.paramValue,
+                'paramType':this.dataForm.paramType,
                 'remark': this.dataForm.remark
               })
             }).then(({data}) => {

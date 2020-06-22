@@ -1,0 +1,97 @@
+// 日期选择
+body {
+  /deep/ .el-date-range-picker__content.is-left {
+    background-color: #343a6d !important;
+  }
+  /deep/ .el-date-range-picker__content.is-right {
+    background-color: #343a6d !important;
+  }
+
+  /deep/ .el-select-dropdown__item {
+    color: #f5f5f5;
+  }
+  /deep/ .el-picker-panel [slot=sidebar], /deep/ .el-picker-panel__sidebar {
+    background-color: #343a6d;
+    border: 0;
+  }
+  /deep/ .el-date-range-picker__header {
+    color: #f5f5f5;
+  }
+  /deep/ .el-date-range-picker table {
+    color: #f5f5f5;
+  }
+  /deep/ .el-date-table th {
+    color: #f5f5f5;
+  }
+  /deep/ .el-picker-panel__shortcut {
+    color: #f5f5f5;
+  }
+  /deep/ .el-picker-panel {
+    background-color: #343a6d;
+    border: 0;
+  }
+  /deep/ .el-picker-panel__icon-btn {
+    color: #f5f5f5;
+  }
+  /deep/ .el-date-table td.in-range div,
+  /deep/ .el-date-table td.in-range div:hover,
+  /deep/ .el-date-table.is-week-mode .el-date-table__row.current div,
+  /deep/ .el-date-table.is-week-mode .el-date-table__row:hover div {
+    background-color: #0c1352;
+  }
+  /deep/ .el-date-editor .el-range-input {
+    color: #f5f5f5;
+  }
+  /deep/ .el-month-table td.in-range div,
+  /deep/ .el-month-table td.in-range div:hover {
+    background-color: #0c1352;
+  }
+  /deep/ .el-date-editor.el-input,
+  /deep/ .el-date-editor.el-input__inner {
+    width: 350px;
+  }
+  /deep/ .el-date-editor .el-range-separator {
+    padding: 0;
+  }
+  /deep/ .el-popover {
+    background: #343a6d;
+    border: 0;
+  }
+  /deep/ .el-tree-node {
+    background: #343a6d;
+    color: #f5f5f5;
+  }
+  /deep/ .el-select-dropdown__empty {
+    color: #f5f5f5;
+  }
+  /deep/ .el-tree--highlight-current
+    .el-tree-node.is-current
+    > .el-tree-node__content {
+    background-color: #0c1352;
+  }
+  /deep/ .el-select-dropdown {
+    border: 0;
+    background: #343a6d;
+    color: #f5f5f5;
+  }
+  /deep/ .el-date-table td.next-month,
+  /deep/ .el-date-table td.prev-month {
+    color: #606266;
+  }
+  /deep/ .el-date-picker__header-label {
+    color: #ffffff;
+  }
+  /deep/ .el-tree-node__content:hover {
+    background-color: #0c1352;
+  }
+  /deep/ .el-month-table td .cell {
+    color: #ffffff;
+  }
+  /deep/ .el-select-dropdown__item.hover,
+  /deep/ .el-select-dropdown__item:hover {
+    background-color: #0c1352;
+  }
+  /deep/ .el-tree-node:focus > .el-tree-node__content {
+    background-color: #0c1352;
+  }
+}

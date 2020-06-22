@@ -35,6 +35,12 @@
         align="center"
         label="用户名">
       </el-table-column>
+       <el-table-column
+        prop="name"
+        header-align="center"
+        align="center"
+        label="姓名">
+      </el-table-column>
       <el-table-column
         prop="email"
         header-align="center"
@@ -46,6 +52,12 @@
         header-align="center"
         align="center"
         label="手机号">
+      </el-table-column>
+      <el-table-column
+        prop="deptName"
+        header-align="center"
+        align="center"
+        label="班年级">
       </el-table-column>
       <el-table-column
         prop="status"
