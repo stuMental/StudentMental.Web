@@ -32,6 +32,9 @@
         <el-form-item>
           <el-button @click="query()">查询</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button @click="export2Excel()" v-show="if_export">导出</el-button>
+        </el-form-item>
       </el-form>
     </center>
     <el-row style="top:0px">
@@ -64,7 +67,9 @@ export default {
       roomaddr: "",
       roomaddrs: [],
       bar_dvdata: [],
-      bar_dvline: []
+      bar_dvline: [],
+      list:[],
+      if_export: false
     };
   },
   methods: {
@@ -177,14 +182,15 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-           this.bar_dvdata = [];
+          this.bar_dvdata = [];
           this.bar_dvline=[];
           data.data.forEach(item => {
             this.bar_dvdata.push(item.total)
             this.bar_dvline.push(item.dt)
           });
           this.initChartbar_dv();
-          // console.log(data)
+          this.list = data.data
+          this.if_export = true;
         } else {
           this.bar_dvdata = [];
           this.bar_dvline=[];
@@ -206,7 +212,22 @@ export default {
           this.roomaddrs = [];
         }
       });
-    }
+    },
+    formatJson(filterVal, jsonData) {
+　　　　return jsonData.map(v => filterVal.map(j => v[j]))
+　　},
+    export2Excel() {
+　　　　require.ensure([], () => {
+　　　　　　const { export_json_to_excel } = require('../../../utils/Export2Excel');
+　　　　　　const tHeader = ['教室','时间','人数'];
+          const filterVal = ['room', 'dt', 'total'];
+          this.list.forEach((item, index) => {
+            item['room'] = this.roomaddr
+          })
+　　　　　　const data = this.formatJson(filterVal, this.list);
+　　　　　　export_json_to_excel(tHeader, data, '人数历史查询统计_'+ this.datepk[0] + '_' + this.datepk[1] + '.xlsx');
+　　　　})
+  　 }
   }
 };
 </script>

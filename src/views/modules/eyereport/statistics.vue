@@ -8,6 +8,7 @@
             <el-form-item>当前时间：{{nowTime}}</el-form-item>
             <el-form-item>
               <el-button @click="showhistory()">历史查询</el-button>
+              <el-button @click="exportToExcel">导出</el-button>
             </el-form-item>
           </center>
         </div>
@@ -20,6 +21,7 @@
           <img src="~@/assets/img/xyzlico.png" />
         </div>
         <el-table
+          id="table-content"
           :data="dataFrom"
           class="tabless"
           style="padding-left:10px;background-color:inherit"
@@ -44,6 +46,9 @@
 
 <script>
 import statisticshistory from "./statistics-history";
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+
 export default {
   data() {
     return {
@@ -175,6 +180,24 @@ export default {
     },
     tableheaderCellStyles({ row, column, rowIndex, columnIndex }) {
       return "background:#2a2f4d;border:#2a2f4d";
+    },
+    // excel
+    //导出Excel
+    exportToExcel () {
+        let et = XLSX.utils.table_to_book(document.getElementById('table-content')); //此处传入table的DOM节点
+        let etout = XLSX.write(et, { 
+          bookType: 'xlsx', 
+          bookSST: true, 
+          type: 'array' 
+        });
+        try {
+          FileSaver.saveAs(new Blob([etout], { 
+            type: 'application/octet-stream' 
+          }), '人数实时统计_' + this.times + '.xlsx');   //导出的文件名
+        } catch (e) {
+            console.log(e, etout) ;
+        }
+        return etout;
     }
   }
 };
