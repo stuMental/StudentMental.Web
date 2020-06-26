@@ -1,6 +1,6 @@
 <template>
   <div class="pro-main">
-    <img src="~@/assets/img/backimg.png" style="position: absolute;width: 100%;" />
+    <img src="~@/assets/img/teacherbackimg.png" style="position: absolute;width: 100%;" />
     <el-row>
       <center>
         <el-form :inline="true" size="medium">
@@ -15,7 +15,7 @@
               <el-date-picker value-format="yyyy-MM-dd" v-model="dataForm.datepk" :type="daterange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="班年级" prop="deptName">
+            <el-form-item label="院系" prop="deptName">
               <el-popover placement="bottom-start" trigger="click" ref="deptpopover">
                 <el-tree :data="deptList" :props="deptListTreeProps" node-key="deptId" ref="deptListTree" @current-change="deptListTreeCurrentChangeHandle" :default-expand-all="false" :highlight-current="true" :expand-on-click-node="false">
                 </el-tree>
@@ -25,6 +25,12 @@
             <el-form-item label="教师" prop="studentName">
               <el-select v-model="dataForm.studentid" filterable placeholder="请选择">
                 <el-option v-for="item in options" :key="item.studentNumber" :label="item.studentName" :value="item.studentNumber">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="科目" prop="subjectName">
+              <el-select v-model="dataForm.subjectid" filterable placeholder="请选择">
+                <el-option v-for="item in options" :key="item.subjectNumber" :label="item.subjectName" :value="item.subjectNumber">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -224,7 +230,8 @@ export default {
         deptId: 0,
         deptName: "",
         studentid: "",
-        studentname: ""
+        studentname: "",
+        subjectname: "",
       }
     };
   },
@@ -837,9 +844,9 @@ export default {
                     show: false
                 },
                 data: [
-                    {value: 335, name: '开心'},
-                    {value: 310, name: '平静'},
-                    {value: 1548, name: '愤怒'}
+                    {value: 335, name: '开心', itemStyle: {color: '#24A15A'}},
+                    {value: 310, name: '平静', itemStyle: {color: '#D6D156'}},
+                    {value: 154, name: '愤怒', itemStyle: {color: '#59609F'}}
                 ]
             }
         ]
@@ -926,22 +933,22 @@ export default {
             {
                 name: '开心',
                 type: 'line',
-                stack: '总量',
                 symbol:'circle',//拐点设置为实心
+                itemStyle: {color: '#24A15A'},
                 data: [120, 132, 101, 134, 90, 230, 210]
             },
             {
                 name: '平静',
                 type: 'line',
-                stack: '总量',
                 symbol:'circle',//拐点设置为实心
+                itemStyle: {color: '#D6D156'},
                 data: [220, 182, 191, 234, 290, 330, 310]
             },
             {
                 name: '愤怒',
                 type: 'line',
-                stack: '总量',
                 symbol:'circle',//拐点设置为实心
+                itemStyle: {color: '#59609F'},
                 data: [320, 332, 301, 334, 390, 330, 320]
             },
         ]
