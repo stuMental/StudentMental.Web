@@ -15,11 +15,11 @@
               <el-date-picker value-format="yyyy-MM-dd" v-model="dataForm.datepk" :type="daterange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="院系" prop="deptName">
+            <el-form-item label="院系" prop="class_name">
               <el-popover placement="bottom-start" trigger="click" ref="deptpopover">
                 <el-tree :data="deptList" :props="deptListTreeProps" node-key="deptId" ref="deptListTree" @current-change="deptListTreeCurrentChangeHandle" :default-expand-all="false" :highlight-current="true" :expand-on-click-node="false">
                 </el-tree>
-                <el-input v-model="dataForm.deptName" slot="reference" :readonly="true" placeholder="点击选择班年级" class="dept-list__input"></el-input>
+                <el-input v-model="dataForm.class_name" slot="reference" :readonly="true" placeholder="点击选择班年级" class="dept-list__input"></el-input>
               </el-popover>
             </el-form-item>
             <el-form-item label="教师" prop="studentName">
@@ -29,9 +29,13 @@
               </el-select>
             </el-form-item>
             <el-form-item label="科目" prop="subjectName">
-              <el-select v-model="dataForm.subjectid" filterable placeholder="请选择">
-                <el-option v-for="item in options" :key="item.subjectNumber" :label="item.subjectName" :value="item.subjectNumber">
-                </el-option>
+              <el-select v-model="dataForm.course_id" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in subjectOptions"
+                  :key="item.courseId"
+                  :label="item.courseName"
+                  :value="item.courseId"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-button @click="query" :loading="false">查询</el-button>
@@ -74,9 +78,9 @@
                 <img src="~@/assets/img/jxms.jpg">
               </div>
               <p>教学模式：混合型</p>
-              <p class="p-top">Rt：0.4</p>
+              <p class="p-top">Rt：{{ rt }}</p>
               <p>教师行为占比</p>
-              <p class="p-top">Ch：0.1</p>
+              <p class="p-top">Ch：{{ ch }}</p>
               <p>师生行为转化率</p>
             </div>
             <div class="jxms-right" style="width: 70%">
@@ -194,7 +198,9 @@ export default {
       xszt: [],
       aditorlegend: [],
       Aditordata: [],
-      options: [],
+      // todo
+      options: [{studentNumber: "202001", studentName: "教师1"}, {studentNumber: "202002", studentName: "教师2"}],
+      subjectOptions: [],
       chartqxzt: null,
       chartbq: null,
       chartjszt: null,
@@ -228,11 +234,19 @@ export default {
       dataForm: {
         datepk: "",
         deptId: 0,
-        deptName: "",
         studentid: "",
-        studentname: "",
-        subjectname: "",
-      }
+        course_id: "",
+        college_name: "",
+        grade_name: "",
+        class_name: "",
+      },
+      rt: null,
+      ch: null,
+      rtchData: [],
+      ssxwData: [],
+      xsxwData: [],
+      jsxwData: [],
+      jxqxData: [],
     };
   },
   mounted() {
@@ -297,7 +311,21 @@ export default {
       this.chartAditor.resize();
     }
   },
-  methods: {    
+  methods: {
+    getcourse(deptid,date1) {
+      this.$http({
+        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/dict"),
+        method: "post",
+        data: this.$http.adornData({
+          deptid: deptid+"",
+          date:date1
+        })
+      }).then(({ data }) => {
+        this.subjectOptions = data.data;
+        console.log(this.subjectOptions)
+        this.dataForm.course = "";
+      });
+    }, 
     //表格属性
     tableheaderCellStyle({ row, column, rowIndex, columnIndex }) {
       return "background:#303660;color:#ffffff;border:#2a2f4d";
@@ -393,116 +421,177 @@ export default {
       var date2 = "";
       date1 = this.dataForm.datepk[0];
       date2 = this.dataForm.datepk[1];
-      if (this.dataForm.deptName === "") {
+      if (this.dataForm.class_name === "") {
         this.$message({
-          message: "班级不为空",
+          message: "院系不为空",
           type: "error",
           duration: 1500
         });
         return;
       }
+      // todo
       if (this.dataForm.studentid === "") {
         this.$message({
-          message: "学生不为空",
+          message: "教师不为空",
           type: "error",
           duration: 1500
         });
         return;
       }
+      // 科目
+      if (this.dataForm.course_id === "") {
+        this.$message({
+          message: "科目不为空",
+          type: "error",
+          duration: 1500
+        });
+        return;
+      }
+      console.log(this.dataForm)
+      console.log(date1)
+      console.log(date2)
       this.$http({
-        url: this.$http.adornUrl("/report/pro"),
+        url: this.$http.adornUrl("/eyereport/teacher/type"),
         method: "post",
         data: this.$http.adornData({
           date1: date1,
           date2: date2,
-          studentid: this.dataForm.studentid
+          deptid: this.dataForm.deptId,
+          teacher_id: this.dataForm.studentid,
+          course_id: this.dataForm.course_id,
+          college_name: this.dataForm.college_name,
+          grade_name: this.dataForm.grade_name,
+          class_name: this.dataForm.class_name
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          // console.log(data);
-          this.show = true;
-          this.xkxq = data.data.xkxq;
-          this.tyfz = data.data.tyfz;
-          this.rjgx = [];
-          this.rjgx.push(parseInt(data.data.rjgx) + 0.5);
-          if (data.data.qxzt.size != 3) {
-            this.qxzt = [];
-            var names = [
-              { name: "低落", value: 0 },
-              { name: "正常", value: 0 },
-              { name: "开心", value: 0 }
-            ];
-            names.forEach(qxztel => {
-              data.data.qxzt.forEach(qxtt => {
-                if (qxztel.name == qxtt.name) {
-                  qxztel.value = qxtt.value;
-                }
-              });
-              this.qxzt.push(qxztel);
-            });
+          console.log(data);
+          // rt-ch图
+          let rtch = data.data.rtch[0]
+          if(rtch){
+            this.rt = rtch.rt
+            this.ch = rtch.ch
+            this.rtchData.push([rtch.rt, rtch.ch]);
+            console.log(this.rtchData)
+            this.initChartrtch()
           }
-          //this.qxzt = data.data.qxzt;
-          this.bq = data.data.bq;
-          this.bqtime = data.data.bqtime;
-          //
-          if (data.data.jsztdata.size != 3) {
-            this.jsztdata = [];
-            var names = [
-              { name: "积极", value: 0 },
-              { name: "正常", value: 0 },
-              { name: "疲惫", value: 0 }
-            ];
-            names.forEach(jsztdatal => {
-              data.data.jsztdata.forEach(jsztdatat => {
-                if (jsztdatal.name == jsztdatat.name) {
-                  jsztdatal.value = jsztdatat.value;
-                }
-              });
-              this.jsztdata.push(jsztdatal);
-            });
+          // 师生行为序列图
+          let ssxw = data.data.ssxw
+          ssxw.forEach((v, i) => {
+            this.ssxwData.push([i, v.type])
+          })
+          console.log(this.ssxwData)
+          this.initChartssxw()
+          // 学生行为分析
+          let xsxw = data.data.xsxw
+          xsxw.forEach((v, i) => {
+            this.xsxwData.push([v.action, v.percentage])
+          })
+          console.log(this.xsxwData)
+          this.initChartxsxw()
+          // 教师行为分析
+          let jsxw = data.data.jsxw
+          jsxw.forEach((v, i) => {
+            this.jsxwData.push([v.action, v.percentage])
+          })
+          console.log(this.jsxwData)
+          this.initChartjsxw()
+          // 教学情绪
+          let jxqx = data.data.qxzt
+          if(jxqx.length != 0){
+            this.jxqxData = [
+              {value: jxqx[0].happy_rate, name: '开心', itemStyle: {color: '#24A15A'}},
+              {value: jxqx[0].normal_rate, name: '平静', itemStyle: {color: '#D6D156'}},
+              {value: jxqx[0].angry_rate, name: '愤怒', itemStyle: {color: '#59609F'}}
+            ]
+            console.log(this.jxqxData)
+            this.initChartjxqx()
           }
-          //
-          if (data.data.xxztdata.size != 3) {
-            this.xxztdata = [];
-            var names = [
-              { name: "非常好", value: 0 },
-              { name: "良好", value: 0 },
-              { name: "正常", value: 0 },
-              { name: "不佳", value: 0 }
-            ];
-            names.forEach(xxztdatal => {
-              data.data.xxztdata.forEach(xxztdatat => {
-                if (xxztdatal.name == xxztdatat.name) {
-                  xxztdatal.value = xxztdatat.value;
-                }
-              });
-              this.xxztdata.push(xxztdatal);
-            });
-          }
+          // 教学情绪趋势图
+          
+          // this.show = true;
+          // this.xkxq = data.data.xkxq;
+          // this.tyfz = data.data.tyfz;
+          // this.rjgx = [];
+          // this.rjgx.push(parseInt(data.data.rjgx) + 0.5);
+          // if (data.data.qxzt.size != 3) {
+          //   this.qxzt = [];
+          //   var names = [
+          //     { name: "低落", value: 0 },
+          //     { name: "正常", value: 0 },
+          //     { name: "开心", value: 0 }
+          //   ];
+          //   names.forEach(qxztel => {
+          //     data.data.qxzt.forEach(qxtt => {
+          //       if (qxztel.name == qxtt.name) {
+          //         qxztel.value = qxtt.value;
+          //       }
+          //     });
+          //     this.qxzt.push(qxztel);
+          //   });
+          // }
+          // //this.qxzt = data.data.qxzt;
+          // this.bq = data.data.bq;
+          // this.bqtime = data.data.bqtime;
+          // //
+          // if (data.data.jsztdata.size != 3) {
+          //   this.jsztdata = [];
+          //   var names = [
+          //     { name: "积极", value: 0 },
+          //     { name: "正常", value: 0 },
+          //     { name: "疲惫", value: 0 }
+          //   ];
+          //   names.forEach(jsztdatal => {
+          //     data.data.jsztdata.forEach(jsztdatat => {
+          //       if (jsztdatal.name == jsztdatat.name) {
+          //         jsztdatal.value = jsztdatat.value;
+          //       }
+          //     });
+          //     this.jsztdata.push(jsztdatal);
+          //   });
+          // }
+          // //
+          // if (data.data.xxztdata.size != 3) {
+          //   this.xxztdata = [];
+          //   var names = [
+          //     { name: "非常好", value: 0 },
+          //     { name: "良好", value: 0 },
+          //     { name: "正常", value: 0 },
+          //     { name: "不佳", value: 0 }
+          //   ];
+          //   names.forEach(xxztdatal => {
+          //     data.data.xxztdata.forEach(xxztdatat => {
+          //       if (xxztdatal.name == xxztdatat.name) {
+          //         xxztdatal.value = xxztdatat.value;
+          //       }
+          //     });
+          //     this.xxztdata.push(xxztdatal);
+          //   });
+          // }
 
-          //this.jsztdata = data.data.jsztdata;
-          //this.xxztdata = data.data.xxztdata;
-          this.jsztline = data.data.jsztline;
-          this.jsztlinedata = data.data.jsztlinedata;
-          this.dataShadow = [];
-          this.jsztlinedata.forEach(jsztlinedatav => {
-            this.dataShadow.push("-1");
-          });
+          // //this.jsztdata = data.data.jsztdata;
+          // //this.xxztdata = data.data.xxztdata;
+          // this.jsztline = data.data.jsztline;
+          // this.jsztlinedata = data.data.jsztlinedata;
+          // this.dataShadow = [];
+          // this.jsztlinedata.forEach(jsztlinedatav => {
+          //   this.dataShadow.push("-1");
+          // });
 
-          this.xxztline = data.data.xxztline;
-          this.xxztlinedata = data.data.xxztlinedata;
-          this.xszt = data.data.xszt;
-          this.aditorlegend = data.data.aditorlegend;
-          this.Aditordata = data.data.Aditordata;
-          // this.initChartqxzt();
-          // this.initchartbq();
-          // this.initChartjszt();
-          // this.initChartxxzt();
-          // this.initChartxxztline();
-          // this.initChartLinejszt();
-          // this.initChartRadarxszt();
-          // this.initChartAditor();
-          // this.initrj();
+          // this.xxztline = data.data.xxztline;
+          // this.xxztlinedata = data.data.xxztlinedata;
+          // this.xszt = data.data.xszt;
+          // this.aditorlegend = data.data.aditorlegend;
+          // this.Aditordata = data.data.Aditordata;
+          // // this.initChartqxzt();
+          // // this.initchartbq();
+          // // this.initChartjszt();
+          // // this.initChartxxzt();
+          // // this.initChartxxztline();
+          // // this.initChartLinejszt();
+          // // this.initChartRadarxszt();
+          // // this.initChartAditor();
+          // // this.initrj();
 
         } else {
           this.$message.error(data.msg);
@@ -567,9 +656,10 @@ export default {
         },
         series: [{
             symbolSize: 20,
-            data: [
-                [0.4, 0.6],
-            ],
+            // data: [
+            //     [0.4, 0.6],
+            // ],
+            data: this.rtchData,
             type: 'scatter'
         }]
       };
@@ -593,8 +683,9 @@ export default {
           top: '20',
         },
         xAxis: {
-            type: "category",
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            type: "value",
+            // type: "category",
+            // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             axisLabel: {
               color: "#ffffff",
             },
@@ -650,7 +741,8 @@ export default {
                 type: 'line',
                 step: 'start',
                 symbol:'circle',//拐点设置为实心
-                data: [120, 132, 101, 134, 90, 230, 210]
+                // data: [0, 1, 0, 1, 0, 1, 0]
+                data: this.ssxwData
             }
         ]
       };
@@ -676,7 +768,7 @@ export default {
         xAxis: {
             type: "category",
             // boundaryGap: false,
-            data: ['发言', '思考/计算', '讨论', '其他'],
+            // data: ['发言', '思考/计算', '讨论', '其他'],
             axisLabel: {
               color: "#ffffff",
             },
@@ -712,7 +804,8 @@ export default {
           
         },
         series: [{
-            data: [10, 30, 10, 50],
+            // data: [['发言', 10], ['发言2', 30], ['发言3', 10], ['发言4', 50]],
+            data: this.xsxwData,
             type: 'bar',
             itemStyle: {
                 normal: {
@@ -744,7 +837,7 @@ export default {
         xAxis: {
             type: "category",
             // boundaryGap: false,
-            data: ['板书', '解说(讲课)', '问答', '巡视', '其他'],
+            // data: ['板书', '解说(讲课)', '问答', '巡视', '其他'],
             axisLabel: {
               color: "#ffffff",
             },
@@ -780,7 +873,8 @@ export default {
           
         },
         series: [{
-            data: [10, 30, 10, 50, 20],
+            // data: [10, 30, 10, 50, 20],
+            data: this.jsxwData,
             type: 'bar',
             itemStyle: {
                 normal: {
@@ -843,11 +937,12 @@ export default {
                 labelLine: {
                     show: false
                 },
-                data: [
-                    {value: 335, name: '开心', itemStyle: {color: '#24A15A'}},
-                    {value: 310, name: '平静', itemStyle: {color: '#D6D156'}},
-                    {value: 154, name: '愤怒', itemStyle: {color: '#59609F'}}
-                ]
+                // data: [
+                //     {value: 335, name: '开心', itemStyle: {color: '#24A15A'}},
+                //     {value: 310, name: '平静', itemStyle: {color: '#D6D156'}},
+                //     {value: 154, name: '愤怒', itemStyle: {color: '#59609F'}}
+                // ]
+                data: this.jxqxData
             }
         ]
       };
@@ -1106,19 +1201,25 @@ export default {
 
     deptListTreeCurrentChangeHandle(data, node) {
       this.dataForm.deptId = data.deptId;
-      this.dataForm.deptName = data.name;
-      this.getstudentlist(this.dataForm.deptId);
+      this.dataForm.class_name = data.name;
+      // todo
+      // this.getTeacherList(this.dataForm.deptId);
+      this.getcourse(this.dataForm.deptId);
       this.$refs['deptpopover'].doClose()
     },
     init() {
       this.iheight = window.innerHeight - 800 + "px";
+      // 院系选择
       this.$http({
         url: this.$http.adornUrl("/sys/dept/select"),
         method: "get",
         params: this.$http.adornParams()
       }).then(({ data }) => {
         this.deptList = treeDataTranslate(data.deptList, "deptId");
-        this.getstudentlist(this.dataForm.deptId);
+        console.log(this.deptList)
+        // todo
+        // this.getTeacherList(this.dataForm.deptId);
+        this.getcourse(this.dataForm.deptId);
       });
     },
     changedatetype(e) {
@@ -1158,9 +1259,10 @@ export default {
         this.dataForm.datepk = "";
       }
     },
-    getstudentlist(id) {
-      // console.log(id)
-       this.$http({
+    // todo
+    getTeacherList(id) {
+      console.log(id)
+      this.$http({
         url: this.$http.adornUrl("/datacenter/schoolstudent/dict"),
         methods: "get",
         params: this.$http.adornParams({
