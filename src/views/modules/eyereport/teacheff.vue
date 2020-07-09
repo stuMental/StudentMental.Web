@@ -53,84 +53,91 @@
     </el-row>
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
       <el-row :gutter="10">
+        <!-- 教学综合效果 -->
         <el-col :span="6" :offset="1">
           <div class="title">
             教学效果综合状态总结&nbsp;
             <img src="~@/assets/img/gxfzico.png" />
           </div>
-          <div id="chartRadarBoxxsztt" class="chart-box" style="min-height:549px;padding-bottom：10px"></div>
-          
+          <!-- <div id="chartRadarBoxxsztt" class="chart-box" style="min-height:549px;padding-bottom：10px"></div>   -->
+          <div id="chartRadarBoxxsztt" class="chart-box" style="min-height:602px;padding-bottom：10px"></div>  
         </el-col>
+
         <el-col :span="16">
-          <div class="title">
-            学生&nbsp;
-            <img src="~@/assets/img/gxfzico.png" />
-          </div>
-          <el-col :span="8" style="padding-right:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
-            <div id="Chartxsqx" class="chart-box">1</div>
-          </el-col>
-          <el-col :span="8" style="padding-right:0px;padding-left:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
-            <div id="Chartxsjs" class="chart-box">1</div>
-          </el-col>
-          <el-col :span="8" style="padding-right:0px;padding-left:0px">
-            <div id="Chartxsxx" class="chart-box">1</div>
-          </el-col>
-          <el-col :span="24" style="padding-right:0px">
-            <div id="Chartxsqxztqs" class="chart-box">1</div>
-          </el-col>
+          <!-- <el-row> -->
+            <div class="title">
+              学生&nbsp;
+              <img src="~@/assets/img/gxfzico.png" />
+            </div>
+            <el-row style="top: 0;">
+              <el-col :span="8" style="padding-right:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
+                <div id="Chartxsqx" class="chart-box">1</div>
+              </el-col>
+              <el-col :span="8" style="padding-right:0px;padding-left:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
+                <div id="Chartxsjs" class="chart-box">1</div>
+              </el-col>
+              <el-col :span="8" style="padding-right:0px;padding-left:0px">
+                <div id="Chartxsxx" class="chart-box">1</div>
+              </el-col>
+            </el-row>
+          <!-- </el-row> -->
+          <el-row style="top: 0;">
+            <div class="title">
+              课堂&nbsp;
+              <img src="~@/assets/img/gxfzico.png" />
+            </div>
+            <el-col :span="8" style="padding-right:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
+              <div id="Chartktjjx" class="chart-box"></div>
+            </el-col>
+            <el-col :span="8" style="padding-right:0px;padding-left:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
+              <div id="Chartktzzd" class="chart-box"></div>
+            </el-col>
+            <el-col :span="8" style="padding-left:0px">
+              <div id="Chartkthdx" class="chart-box"></div>
+            </el-col>
+          </el-row>
+
         </el-col>
       </el-row>
-      <el-row :gutter="10">
-        <el-col :span="11" :offset="1" style="padding-right:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
-          <div id="Chartxsjsztqs" class="chart-box"></div>
+
+      <el-row :gutter="10" style="margin-top:20px;">
+        <!-- 学生情绪状态 -->
+        <el-col :span="10" :offset="1" style="padding-left:4px; padding-right:0px;">
+            <div class="title">
+              学生&nbsp;
+              <img src="~@/assets/img/gxfzico.png" />
+            </div>
+          <div id="Chartxsqxztqs" class="chart-box">1</div>
         </el-col>
-        <el-col :span="11" style="padding-left:0px">
-          <div id="Chartxsxxztqs" class="chart-box"></div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="10">
-        <el-col :span="4" :offset="1">
+        <!-- 课堂积极性 -->
+        <el-col :span="11" :offset="1" style="padding-left:0px; padding-right:4px;">
           <div class="title">
             课堂&nbsp;
             <img src="~@/assets/img/gxfzico.png" />
           </div>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="10">
-        <el-col :span="7" :offset="1" style="padding-right:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
-          <div id="Chartktjjx" class="chart-box"></div>
-        </el-col>
-        <el-col :span="7" style="padding-right:0px;padding-left:0px;border-right-color: #424562; border-right-width: 2px; border-right-style: solid;">
-          <div id="Chartktzzd" class="chart-box"></div>
-        </el-col>
-        <el-col :span="8" style="padding-left:0px">
-          <div id="Chartkthdx" class="chart-box"></div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="11" :offset="1">
           <div id="Chartktjjxqs" class="chart-box"></div>
         </el-col>
-        <el-col :span="11">
+      </el-row>
+      
+      <el-row>
+        <!-- 学生精神状态 -->
+        <el-col :span="10" :offset="1" style="padding-left:0px">
+          <div id="Chartxsjsztqs" class="chart-box"></div>
+        </el-col>
+         <!-- 课堂专注度 -->
+        <el-col :span="11" :offset="1">
           <div id="Chartktzzdqs" class="chart-box"></div>
         </el-col>
       </el-row>
+     
       <el-row>
-        <el-col :span="11" :offset="1">
-          <div id="Chartkthdxqs" class="chart-box" style="min-height:320px"></div>
+        <!-- 学生学习状态 -->
+        <el-col :span="10" :offset="1" style="padding-left:0px">
+          <div id="Chartxsxxztqs" class="chart-box"></div>
         </el-col>
-        <el-col :span="11" style="padding-left:15px">
-          <div class="title">
-            课堂整体学业状态分析&nbsp;
-            <img src="~@/assets/img/gxfzico.png" />
-          </div>
-          <div id="Chartktztxyztfx" class="chart-box" style="min-height:262px">
-           
-          </div>
-          <div class="chart-box" style="min-height:20px"> 
-             <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">备注：学生成绩与学习状态分别为1绩点,绩点越高表示越优秀</span>
-          </div>
+        <!-- 课堂互动性趋势 -->
+        <el-col :span="11" :offset="1">
+          <div id="Chartkthdxqs" class="chart-box"></div>
         </el-col>
       </el-row>
        <el-row :gutter="20" style="height:50px">
@@ -525,22 +532,21 @@ export default {
           this.initChartkthdxqs();
         }
       });
-      this.$http({
-        url: this.$http.adornUrl("/eyereportdata/teacheff/ktztxxfx"),
-        method: "post",
-        data: this.$http.adornData({
-          deptid: this.dataForm.deptId,
-          course_name: this.dataForm.course,
-          dt: this.dataForm.date1
-        })
-      }).then(({ data }) => {
-        // console.log(data);
-        if (data.data.length > 0) {
-          this.initChartktztxyztfx(data.data);
-        } else {
-          this.initChartktztxyztfx();
-        }
-      });
+      // this.$http({
+      //   url: this.$http.adornUrl("/eyereportdata/teacheff/ktztxxfx"),
+      //   method: "post",
+      //   data: this.$http.adornData({
+      //     deptid: this.dataForm.deptId,
+      //     course_name: this.dataForm.course,
+      //     dt: this.dataForm.date1
+      //   })
+      // }).then(({ data }) => {
+      //   if (data.data.length > 0) {
+      //     this.initChartktztxyztfx(data.data);
+      //   } else {
+      //     this.initChartktztxyztfx();
+      //   }
+      // });
     },
     init() {
       this.$http({

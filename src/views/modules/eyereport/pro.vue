@@ -35,7 +35,41 @@
     </el-row>
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
       <el-row :gutter="20">
-        <el-col :span="4" :offset="1">
+        <el-col :span="5" :offset="1" style="padding-right: 0px;">
+          <div class="title">学业自律性&nbsp;<img src="~@/assets/img/xyzlico.png" /></div>
+          <div id="jsztchart" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div>
+        </el-col>
+        <el-col :span="5" style="padding-left: 0px; ">
+          <div class="title" style="height:25px">&nbsp;</div>
+          <div id="xxztchart" class="chart-box"></div>
+        </el-col>
+
+        <el-col :span="6">
+          <div class="title">情绪状态&nbsp;<img src="~@/assets/img/qxztico.png" /></div>
+          <div id="qxzt_chart" class="chart-box"></div>
+        </el-col>
+        <el-col :span="6">
+          <div class="title">人际关系&nbsp;<img src="~@/assets/img/rjgxico.png" /></div>
+          <div id="rjgx_chart" class="chart-box" />
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="10" :offset="1">
+          <div class="titles">精神状态&nbsp;<img src="~@/assets/img/jsztico.png" /></div>
+          <div id="jsztline" class="chart-box"></div>
+          <div class="titles">
+            学习状态&nbsp;<img src="~@/assets/img/xxztico.png" /></div>
+          <div id="xxztline" class="chart-box"></div>
+        </el-col>
+        <el-col :span="12" >
+          <div class="title">表情&nbsp;<img src="~@/assets/img/bqico.png" /></div>
+          <div id="bq_chart" class="chart-box"></div>
+        </el-col>
+        <el-col :span="7">
+          <div class="title">学生综合状态总结&nbsp;<img src="~@/assets/img/xszhico.png" /></div>
+          <div id="chartRadarBoxxszt" class="chart-box"></div>
+        </el-col>
+        <el-col :span="5">
           <div class="title">个性化发展&nbsp;<img src="~@/assets/img/gxfzico.png" /></div>
           <el-table :data="xkxq" class="tabless" height="140" :header-cell-style="tableheaderCellStyle" :cell-style="tableCellStyle">
             <el-table-column prop="name" label="学科兴趣">
@@ -45,49 +79,6 @@
             <el-table-column prop="name" label="体艺发展">
             </el-table-column>
           </el-table>
-        </el-col>
-        <el-col :span="6">
-          <div class="title">人际关系&nbsp;<img src="~@/assets/img/rjgxico.png" /></div>
-          <div id="rjgx_chart" class="chart-box" />
-        </el-col>
-        <el-col :span="6">
-          <div class="title">情绪状态&nbsp;<img src="~@/assets/img/qxztico.png" /></div>
-          <div id="qxzt_chart" class="chart-box"></div>
-        </el-col>
-        <el-col :span="6">
-          <div class="title">学生综合状态总结&nbsp;<img src="~@/assets/img/xszhico.png" /></div>
-          <div id="chartRadarBoxxszt" class="chart-box"></div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12" :offset="1">
-          <div class="title">表情&nbsp;<img src="~@/assets/img/bqico.png" /></div>
-          <div id="bq_chart" class="chart-box"></div>
-        </el-col>
-        <el-col :span="5" style="padding-right: 0px;">
-          <div class="title">学业自律性&nbsp;<img src="~@/assets/img/xyzlico.png" /></div>
-          <div id="jsztchart" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div>
-        </el-col>
-        <el-col :span="5" style="padding-left: 0px; ">
-          <div class="title" style="height:25px">&nbsp;</div>
-          <div id="xxztchart" class="chart-box"></div>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12" :offset="1">
-          <div class="title">学业状态分析&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
-          <div id="chartAditorBox" class="chart-box" style="height:503px"></div>
-          <div class="chart-box" style="min-height:100px">
-            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">备注：成绩与学业状态分别为1绩点,绩点越高表示越优秀</span>
-
-          </div>
-        </el-col>
-        <el-col :span="10" >
-          <div class="titles" >精神状态&nbsp;<img src="~@/assets/img/jsztico.png" /></div>
-          <div id="jsztline" class="chart-box"></div>
-          <div class="titles">
-            学习状态&nbsp;<img src="~@/assets/img/xxztico.png" /></div>
-          <div id="xxztline" class="chart-box"></div>
         </el-col>
       </el-row>
       <el-row :gutter="20" style="height:50px">
@@ -164,7 +155,7 @@ export default {
     this.initChartLinejszt();
     this.initChartxxztline();
     this.initChartjszt();
-    this.initChartAditor();
+    // this.initChartAditor();
     this.initChartxxzt();
     this.initChartqxzt();
     this.initChartRadarxszt();
@@ -405,7 +396,7 @@ export default {
           this.initChartxxztline();
           this.initChartLinejszt();
           this.initChartRadarxszt();
-          this.initChartAditor();
+          // this.initChartAditor();
           this.initrj();
         } else {
           this.$message.error(data.msg);
