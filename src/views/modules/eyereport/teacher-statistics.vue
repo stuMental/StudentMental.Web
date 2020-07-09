@@ -44,31 +44,6 @@
       </center>
     </el-row>
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
-      <!-- <el-row :gutter="20">
-        <el-col :span="4" :offset="1">
-          <div class="title">个性化发展&nbsp;<img src="~@/assets/img/gxfzico.png" /></div>
-          <el-table :data="xkxq" class="tabless" height="140" :header-cell-style="tableheaderCellStyle" :cell-style="tableCellStyle">
-            <el-table-column prop="name" label="学科兴趣">
-            </el-table-column>
-          </el-table>
-          <el-table :data="tyfz" class="tabless" height="140" :header-cell-style="tableheaderCellStyle" :cell-style="tableCellStyle">
-            <el-table-column prop="name" label="体艺发展">
-            </el-table-column>
-          </el-table>
-        </el-col>
-        <el-col :span="6">
-          <div class="title">人际关系&nbsp;<img src="~@/assets/img/rjgxico.png" /></div>
-          <div id="rjgx_chart" class="chart-box" />
-        </el-col>
-        <el-col :span="6">
-          <div class="title">情绪状态&nbsp;<img src="~@/assets/img/qxztico.png" /></div>
-          <div id="qxzt_chart" class="chart-box"></div>
-        </el-col>
-        <el-col :span="6">
-          <div class="title">学生综合状态总结&nbsp;<img src="~@/assets/img/xszhico.png" /></div>
-          <div id="chartRadarBoxxszt" class="chart-box"></div>
-        </el-col>
-      </el-row> -->
       <el-row :gutter="20">
         <el-col :span="11" :offset="1" style="padding-right: 0px;">
           <div class="title">教师互动类型</div>
@@ -88,7 +63,6 @@
             </div>
           </div>
 
-          <!-- <div id="xsxwchart" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div> -->
         </el-col>
         <el-col :span="11" style="padding-left: 0px;">
           <div class="title" style="height:25px">&nbsp;</div>
@@ -114,7 +88,6 @@
       <el-row :gutter="20" style="margin-top: 15px;">
         <el-col :span="11" :offset="1" style="padding-right: 0px;">
           <div class="title">教学情绪</div>
-          <!-- <div id="jsztchart" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div> -->
           <div id="jxqxchart" class="chart-box" style="border-right: 2px solid #424562; overflow:hidden;"></div>
         </el-col>
         <el-col :span="11" style="padding-left: 0px;">
@@ -127,47 +100,41 @@
 
       <!-- 第三部分 -->
       <el-row :gutter="20" style="margin-top: 15px;">
-        <!-- <el-col :span="12" :offset="1">
-          <div class="title">表情&nbsp;<img src="~@/assets/img/bqico.png" /></div>
-          <div id="bq_chart" class="chart-box"></div>
-        </el-col> -->
         <el-col :span="11" :offset="1" style="padding-right: 0px;">
           <div class="title">教学状态</div>
-          <!-- <div id="jsztchart" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div> -->
-          <div id="jxztchart" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div>
-          <!-- <div id="chartAditorBox" class="chart-box" style="height:503px"></div> -->
-          <div class="jxzt-score" style="position: relative; top: -75px; color: #fff; padding-left: 20px;">
-            <p>综合得分：78</p>
-            <p>教学情绪平稳、准时上课并且教学行为较为丰富</p>
+          <div id="jxztchart" class="chart-box" style="height:320px; border-right-color: #424562; border-right-width: 2px; border-right-style: solid;"></div>
+          <div class="jxzt-score" style="position: relative; top: -105px; color: #fff; padding-left: 20px;">
+            <p>综合得分：{{score}}</p>
+            <!-- <p>教学情绪平稳、准时上课并且教学行为较为丰富</p> -->
+            <p>教学状态表现
+              <span v-if="90 <= score && score <= 100">优秀</span>
+              <span v-else-if="80 <= score && score < 90">良好</span>
+              <span v-else-if="70 <= score && score < 80">一般</span>
+              <span v-else-if="60 <= score && score < 70">较差</span>
+              <span v-else-if="0 < score && score < 60">差</span>
+              ，其中
+              <span v-if="0.85 <= emotion && emotion <= 1">教学情绪积极、</span>
+              <span v-else-if="0.6 <= emotion && emotion < 0.85">教学情绪平稳、</span>
+              <span v-else-if="emotion < 0.6">教学中有较多愤怒情绪、</span>
+              <span v-if="ontime == 1">准时上课</span>
+              <span v-else-if="0.6 <= ontime && emotion < 1">偶尔不准时上课</span>
+              <span v-else-if="ontime < 0.6">不准时上课情况较突出</span>
+              <span v-if="0.9 <= behavior && behavior <= 1">并且教学行为丰富</span>
+              <span v-else-if="0.8 <= behavior && behavior < 0.9">并且教学行为较丰富</span>
+              <span v-else-if="0.6 <= behavior && behavior < 0.8">并且教学行为较丰富</span>
+              <span v-else-if="behavior < 0.6">并且教学行为单一</span>
+            </p>
           </div>
         </el-col>
         <el-col :span="11" style="padding-left: 0px; ">
           <div class="title" style="height:25px">&nbsp;</div>
           <div style="width: 100%; background-color: #30345C;">
-            <div id="jxztchartline" class="chart-box" style="width: 87%;"></div>
+            <div id="jxztchartline" class="chart-box" style="height:320px; width: 87%;"></div>
           </div>
         </el-col>
       </el-row>
 
-      <!-- <el-row :gutter="20">
-        <el-col :span="12" :offset="1">
-          <div class="title">学业状态分析&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
-          <div id="chartAditorBox" class="chart-box" style="height:503px"></div>
-          <div class="chart-box" style="min-height:100px">
-            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">备注：成绩与学业状态分别为1绩点,绩点越高表示越优秀</span>
-
-          </div>
-        </el-col>
-        <el-col :span="10" >
-          <div class="titles" >精神状态&nbsp;<img src="~@/assets/img/jsztico.png" /></div>
-          <div id="jsztline" class="chart-box"></div>
-          <div class="titles">
-            学习状态&nbsp;<img src="~@/assets/img/xxztico.png" /></div>
-          <div id="xxztline" class="chart-box"></div>
-        </el-col>
-      </el-row> -->
-      <el-row :gutter="20" style="height:50px">
-      </el-row>
+      <el-row :gutter="20" style="height:50px"></el-row>
     </div>
   </div>
 </template>
@@ -180,8 +147,8 @@ export default {
   data() {
     return {
       daterange: "daterange",
-      // show: false,
-      show: true,
+      show: false,
+      // show: true,
       xkxq: [],
       tyfz: [],
       rjgx: [],
@@ -247,42 +214,35 @@ export default {
       xsxwData: [],
       jsxwData: [],
       jxqxData: [],
+      jxqxlineData: {},
+      jxztData: {},
+      score: null,
+      ontime: null,
+      emotion: null,
+      behavior: null,
+      jxqxline: [],
+      jxztlineData: {}
     };
   },
   mounted() {
     this.init();
-    // this.initChartLinejszt();
-    // this.initChartxxztline();
-    // this.initChartjszt();
-    // this.initChartAditor();
-    // this.initChartxxzt();
-    // this.initChartqxzt();
-    // this.initChartRadarxszt();
-    // this.initchartbq();
-    // this.initrj();
-
     // rt-ch图
     this.initChartrtch();
-
     // 师生行为分析
     this.initChartssxw();
-
     // 学生行为分析
     this.initChartxsxw();
-
     // 教师行为分析
     this.initChartjsxw();
-
     // 教学情绪
     this.initChartjxqx();
     this.initChartjxqxline();
-
     // 教学状态
     this.initChartjxzt();
     this.initChartjxztline();
   },
+  // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
   activated() {
-    // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
     if (this.chartqxzt) {
       this.chartqxzt.resize();
     }
@@ -326,6 +286,21 @@ export default {
         this.dataForm.course = "";
       });
     }, 
+    // 教师
+    getteacher(deptid,date1) {
+      this.$http({
+        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/dict3"),
+        method: "post",
+        data: this.$http.adornData({
+          deptid: deptid+"",
+          date:date1
+        })
+      }).then(({ data }) => {
+        this.subjectOptions = data.data;
+        console.log(this.subjectOptions)
+        this.dataForm.course = "";
+      });
+    }, 
     //表格属性
     tableheaderCellStyle({ row, column, rowIndex, columnIndex }) {
       return "background:#303660;color:#ffffff;border:#2a2f4d";
@@ -333,89 +308,7 @@ export default {
     tableCellStyle({ row, column, rowIndex, columnIndex }) {
       return "color:#e8b898;background:#2a2f4d;border:#2a2f4d";
     },
-    //人际关系
-    initrj() {
-      var option = {
-        color: [
-          "rgb(1, 150, 66)",
-          "rgb(144, 188, 61)",
-          "rgb(207, 202, 82)",
-          "rgb(160, 109, 228)"
-        ],
-        legend: {
-          data: ["非常好", "良好", "正常", "孤僻"],
-          textStyle: {
-            color: "#ffffff"
-          }
-        },
-        series: [
-          {
-            // radius: "100%",
-            axisLabel: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            pointer: {
-              width: 10,
-              length: "80%"
-            },
-            splitLine: {
-              show: false
-            },
-            center: ["50%", "75%"],
-            axisLine: {
-              lineStyle: {
-                width: 40, // 属性lineStyle控制线条样式
-                color: [
-                  [0.25, "rgb(160, 109, 228)"],
-                  [0.5, "rgb(207, 202, 82)"],
-                  [0.75, "rgb(144, 188, 61)"],
-                  [1, "rgb(1, 150, 66)"]
-                ]
-              }
-            },
-            endAngle: 0,
-            startAngle: 180,
-            type: "gauge",
-            splitNumber: 4,
-            min: 4,
-            max: 0,
-            detail: {
-              show: false
-            },
-            itemStyle: {},
-            data: this.rjgx
-          },
-          {
-            type: "funnel",
-            x: "56%",
-            width: "0%",
-            label: {
-              show: false
-            },
-            labelLine: {
-              show: false
-            },
-            itemStyle: {
-              borderWidth: 0
-            },
-            data: [
-              { value: 0, name: "非常好" },
-              { value: 0, name: "良好" },
-              { value: 0, name: "正常" },
-              { value: 0, name: "孤僻" }
-            ]
-          }
-        ]
-      };
-      this.chartrjgx = echarts.init(document.getElementById("rjgx_chart"));
-      this.chartrjgx.setOption(option),true;
-      window.addEventListener("resize", () => {
-        this.chartrjgx.resize();
-      });
-    },
+    // 查询
     query() {
       var date1 = "";
       var date2 = "";
@@ -508,96 +401,49 @@ export default {
             this.initChartjxqx()
           }
           // 教学情绪趋势图
-          
-          // this.show = true;
-          // this.xkxq = data.data.xkxq;
-          // this.tyfz = data.data.tyfz;
-          // this.rjgx = [];
-          // this.rjgx.push(parseInt(data.data.rjgx) + 0.5);
-          // if (data.data.qxzt.size != 3) {
-          //   this.qxzt = [];
-          //   var names = [
-          //     { name: "低落", value: 0 },
-          //     { name: "正常", value: 0 },
-          //     { name: "开心", value: 0 }
-          //   ];
-          //   names.forEach(qxztel => {
-          //     data.data.qxzt.forEach(qxtt => {
-          //       if (qxztel.name == qxtt.name) {
-          //         qxztel.value = qxtt.value;
-          //       }
-          //     });
-          //     this.qxzt.push(qxztel);
-          //   });
-          // }
-          // //this.qxzt = data.data.qxzt;
-          // this.bq = data.data.bq;
-          // this.bqtime = data.data.bqtime;
-          // //
-          // if (data.data.jsztdata.size != 3) {
-          //   this.jsztdata = [];
-          //   var names = [
-          //     { name: "积极", value: 0 },
-          //     { name: "正常", value: 0 },
-          //     { name: "疲惫", value: 0 }
-          //   ];
-          //   names.forEach(jsztdatal => {
-          //     data.data.jsztdata.forEach(jsztdatat => {
-          //       if (jsztdatal.name == jsztdatat.name) {
-          //         jsztdatal.value = jsztdatat.value;
-          //       }
-          //     });
-          //     this.jsztdata.push(jsztdatal);
-          //   });
-          // }
-          // //
-          // if (data.data.xxztdata.size != 3) {
-          //   this.xxztdata = [];
-          //   var names = [
-          //     { name: "非常好", value: 0 },
-          //     { name: "良好", value: 0 },
-          //     { name: "正常", value: 0 },
-          //     { name: "不佳", value: 0 }
-          //   ];
-          //   names.forEach(xxztdatal => {
-          //     data.data.xxztdata.forEach(xxztdatat => {
-          //       if (xxztdatal.name == xxztdatat.name) {
-          //         xxztdatal.value = xxztdatat.value;
-          //       }
-          //     });
-          //     this.xxztdata.push(xxztdatal);
-          //   });
-          // }
-
-          // //this.jsztdata = data.data.jsztdata;
-          // //this.xxztdata = data.data.xxztdata;
-          // this.jsztline = data.data.jsztline;
-          // this.jsztlinedata = data.data.jsztlinedata;
-          // this.dataShadow = [];
-          // this.jsztlinedata.forEach(jsztlinedatav => {
-          //   this.dataShadow.push("-1");
-          // });
-
-          // this.xxztline = data.data.xxztline;
-          // this.xxztlinedata = data.data.xxztlinedata;
-          // this.xszt = data.data.xszt;
-          // this.aditorlegend = data.data.aditorlegend;
-          // this.Aditordata = data.data.Aditordata;
-          // // this.initChartqxzt();
-          // // this.initchartbq();
-          // // this.initChartjszt();
-          // // this.initChartxxzt();
-          // // this.initChartxxztline();
-          // // this.initChartLinejszt();
-          // // this.initChartRadarxszt();
-          // // this.initChartAditor();
-          // // this.initrj();
+          let jxqxline = data.data.jxqxline
+          this.jxqxlineData.dt = []
+          this.jxqxlineData.happy = []
+          this.jxqxlineData.normal = []
+          this.jxqxlineData.angry = []
+          if(jxqxline.length != 0){
+            jxqxline.forEach((v, i) => {
+              this.jxqxlineData.dt.push(v.dt)
+              this.jxqxlineData.happy.push(v.happy_rate)
+              this.jxqxlineData.normal.push(v.normal_rate)
+              this.jxqxlineData.angry.push(v.angry_rate)
+            })
+            console.log(this.jxqxlineData)
+            this.initChartjxqxline()
+          }
+          // 教学状态
+          let jxzt = data.data.jxzt
+          if(jxzt.length != 0){
+            this.score = Number(jxzt[0]['score'])
+            this.ontime = Number(jxzt[0]['ontime'])
+            this.emotion = Number(jxzt[0]['emotion'])
+            this.behavior = Number(jxzt[0]['behavior'])
+            console.log(this.score, this.ontime, this.behavior, this.emotion)
+            this.initChartjxzt()
+          }
+          // 教学状态趋势
+          let jxztline = data.data.jxztline
+          if(jxztline.length != 0){
+            this.jxztlineData.dt = []
+            this.jxztlineData.score = []
+            jxztline.forEach((v, i) => {
+              this.jxztlineData.dt.push(v.dt)
+              this.jxztlineData.score.push(v.score)
+            })
+            console.log(this.jxztlineData)
+            this.initChartjxztline()
+          }
+          this.show = true;
 
         } else {
           this.$message.error(data.msg);
         }
       });
-      // console.log(this.dataForm);
     },
 
     // rt-ch图
@@ -997,7 +843,8 @@ export default {
                 color: "#555971"
               }
             },
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            data: this.jxqxlineData.dt
         },
         yAxis: {
             type: 'value',
@@ -1024,27 +871,34 @@ export default {
           },
           
         },
+        grid: {
+          left: '18%',
+          bottom:'38%'
+        },
         series: [
             {
                 name: '开心',
                 type: 'line',
                 symbol:'circle',//拐点设置为实心
                 itemStyle: {color: '#24A15A'},
-                data: [120, 132, 101, 134, 90, 230, 210]
+                // data: [120, 132, 101, 134, 90, 230, 210]
+                data: this.jxqxlineData.happy
             },
             {
                 name: '平静',
                 type: 'line',
                 symbol:'circle',//拐点设置为实心
                 itemStyle: {color: '#D6D156'},
-                data: [220, 182, 191, 234, 290, 330, 310]
+                // data: [220, 182, 191, 234, 290, 330, 310]
+                data: this.jxqxlineData.normal
             },
             {
                 name: '愤怒',
                 type: 'line',
                 symbol:'circle',//拐点设置为实心
                 itemStyle: {color: '#59609F'},
-                data: [320, 332, 301, 334, 390, 330, 320]
+                // data: [320, 332, 301, 334, 390, 330, 320]
+                data: this.jxqxlineData.angry
             },
         ]
       };
@@ -1101,7 +955,8 @@ export default {
             areaStyle: {normal: {}},
             data: [
                 {
-                    value: [0.7, 0.6, 1],
+                    // value: [0.7, 0.6, 1],
+                    value: [this.emotion, this.behavior, this.ontime],
                     areaStyle: {
                     normal: {
                         color: '#4572C5', // 选择区域颜色
@@ -1145,7 +1000,8 @@ export default {
                 color: "#555971"
               }
             },
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            data: this.jxztlineData.dt
         },
         yAxis: {
             type: 'value',
@@ -1172,11 +1028,16 @@ export default {
           },
           
         },
+        grid: {
+          left: '18%',
+          bottom:'28%'
+        },
         tooltip: {
             trigger: 'axis'
         },
         series: [{
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            // data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: this.jxztlineData.score,
             type: 'line',
             symbol:'circle',//拐点设置为实心
             itemStyle: {
@@ -1202,9 +1063,10 @@ export default {
     deptListTreeCurrentChangeHandle(data, node) {
       this.dataForm.deptId = data.deptId;
       this.dataForm.class_name = data.name;
+      // this.getcourse(this.dataForm.deptId);
+      this.getteacher(this.dataForm.deptId);
       // todo
       // this.getTeacherList(this.dataForm.deptId);
-      this.getcourse(this.dataForm.deptId);
       this.$refs['deptpopover'].doClose()
     },
     init() {
@@ -1217,9 +1079,9 @@ export default {
       }).then(({ data }) => {
         this.deptList = treeDataTranslate(data.deptList, "deptId");
         console.log(this.deptList)
+        this.getcourse(this.dataForm.deptId);
         // todo
         // this.getTeacherList(this.dataForm.deptId);
-        this.getcourse(this.dataForm.deptId);
       });
     },
     changedatetype(e) {
@@ -1263,8 +1125,8 @@ export default {
     getTeacherList(id) {
       console.log(id)
       this.$http({
-        url: this.$http.adornUrl("/datacenter/schoolstudent/dict"),
-        methods: "get",
+        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/getTeacherIdList"),
+        methods: "post",
         params: this.$http.adornParams({
           deptId: id
         })
@@ -1276,769 +1138,7 @@ export default {
         }
       });
     },
-    // 饼状图
-    initChartqxzt() {
-      var option = {
-        legend: {
-          orient: "horizontal",
-          left: "center",
-          data: [
-            {
-              name: "开心",
-              icon: "rect"
-            },
-            {
-              name: "正常",
-              icon: "rect"
-            },
-            {
-              name: "低落",
-              icon: "rect"
-            }
-          ],
-          textStyle: {
-            color: "#ffffff"
-          }
-        },
-        series: [
-          {
-            type: "pie",
-            radius: "55%",
-            center: ["50%", "50%"],
-            stillShowZeroSum: false,
-            data: this.qxzt,
-            labelLine: {
-              normal: {
-                lineStyle: {
-                  color: "#ffffff" // 改变标示线的颜色
-                }
-              }
-            },
-            label: {
-              normal: {
-                formatter: function(params) {
-                  var res = params.name + "\r\n";
-                  res += params.value + "%";
-                  return res;
-                },
-                textStyle: {
-                  color: "#ffffff" // 改变标示文字的颜色
-                }
-              }
-            },
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)"
-              },
-              normal: {
-                color: function(params) {
-                  if (params.name == "正常") {
-                    return "#b9b43b";
-                  }
-                  if (params.name == "开心") {
-                    return "#019640";
-                  }
-                  if (params.name == "低落") {
-                    return "#545b99";
-                  }
-                }
-              }
-            }
-          }
-        ]
-      };
-      this.chartqxzt = echarts.init(document.getElementById("qxzt_chart"));
-      this.chartqxzt.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartqxzt.resize();
-      });
-    },
-    // 折线图
-    initchartbq() {
-      var option = {
-        grid: {
-          left: "3%",
-          right: "7%",
-          bottom: "7%",
-          top: "6%",
-          containLabel: true
-        },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: this.bqtime,
-          axisLabel: {
-            color: "#ffffff",
-            interval: 0,
-            rotate: -40
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#555971",
-              type: "solid"
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: "#555971"
-            }
-          }
-        },
-        yAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: ["3", "2", "1", "0", "-1"],
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#555971",
-              type: "solid"
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: "#555971"
-            }
-          },
-          axisLabel: {
-            color: "#ffffff",
-            formatter: function(value) {
-              var texts = [];
-              if (value == 0) {
-                texts.push("开心");
-              } else if (value == 1) {
-                texts.push("正常");
-              } else if (value == 2) {
-                texts.push("低落");
-              }
-              return texts;
-            }
-          }
-        },
-        series: [
-          {
-            type: "line",
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  color: "#ecd760"
-                }
-              }
-            },
-            areaStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: "#ecd760"
-                  },
-                  {
-                    offset: 1,
-                    color: "rgba(100,178,237,0.1)"
-                  }
-                ])
-              }
-            },
-            data: this.bq
-          }
-        ]
-      };
-      this.chartbq = echarts.init(document.getElementById("bq_chart"));
-      this.chartbq.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartbq.resize();
-      });
-    },
-    // 饼状图
-    initChartjszt() {
-      var option = {
-        legend: {
-          orient: "horizontal",
-          left: "center",
-          data: [
-            {
-              name: "积极",
-              icon: "rect"
-            },
-            {
-              name: "正常",
-              icon: "rect"
-            },
-            {
-              name: "疲惫",
-              icon: "rect"
-            }
-          ],
-          textStyle: {
-            color: "#ffffff"
-          }
-        },
-        graphic: [
-          {
-            //环形图中间添加文字
-            type: "text", //通过不同top值可以设置上下显示
-            left: "center",
-            top: "48%",
-            style: {
-              text: "-精神状态-",
-              textAlign: "center",
-              fill: "#ffffff", //文字的颜色
-              width: 30,
-              height: 30,
-              fontSize: 20,
-              fontFamily: "Microsoft YaHei"
-            }
-          }
-        ],
-        series: [
-          {
-            type: "pie",
-            radius: ["40%", "55%"],
-            data: this.jsztdata,
-            labelLine: {
-              normal: {
-                length: 5, // 改变标示线的长度
-                lineStyle: {
-                  color: "#ffffff" // 改变标示线的颜色
-                }
-              }
-            },
-            label: {
-              normal: {
-                formatter: function(params) {
-                  var res = params.name + "\r\n";
-                  res += params.value + "%";
-                  return res;
-                },
-                textStyle: {
-                  color: "#ffffff" // 改变标示文字的颜色
-                }
-              }
-            },
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)"
-              },
-              normal: {
-                color: function(params) {
-                  if (params.name == "积极") {
-                    return "#23a15b";
-                  }
-                  if (params.name == "正常") {
-                    return "#d6d156";
-                  }
-                  if (params.name == "疲惫") {
-                    return "#59609f";
-                  }
-                }
-              }
-            }
-          }
-        ]
-      };
-      this.chartjszt = echarts.init(document.getElementById("jsztchart"));
-      this.chartjszt.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartjszt.resize();
-      });
-      
-    },
-    initChartxxzt() {
-      var option = {
-        legend: {
-          orient: "horizontal",
-          left: "center",
-          data: [
-            {
-              name: "非常好",
-              icon: "triangle"
-            },
-            {
-              name: "良好",
-              icon: "triangle"
-            },
-            {
-              name: "正常",
-              icon: "triangle"
-            },
-            {
-              name: "不佳",
-              icon: "triangle"
-            }
-          ],
-          textStyle: {
-            color: "#ffffff"
-          }
-        },
-        graphic: [
-          {
-            //环形图中间添加文字
-            type: "text", //通过不同top值可以设置上下显示
-            left: "center",
-            top: "48%",
-            style: {
-              text: "-学习状态-",
-              textAlign: "center",
-              fill: "#ffffff", //文字的颜色
-              width: 30,
-              height: 30,
-              fontSize: 20,
-              fontFamily: "Microsoft YaHei"
-            }
-          }
-        ],
-        series: [
-          {
-            type: "pie",
-            radius: ["40%", "55%"],
-            data: this.xxztdata,
-            labelLine: {
-              normal: {
-                length: 5, // 改变标示线的长度
-                lineStyle: {
-                  color: "#ffffff" // 改变标示线的颜色
-                }
-              }
-            },
-            label: {
-              normal: {
-                formatter: function(params) {
-                  var res = params.name + "\r\n";
-                  res += params.value + "%";
-                  return res;
-                },
-                textStyle: {
-                  color: "#ffffff" // 改变标示文字的颜色
-                }
-              }
-            },
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)"
-              },
-              normal: {
-                color: function(params) {
-                  if (params.name == "非常好") {
-                    return "#019640";
-                  }
-                  if (params.name == "良好") {
-                    return "#8fbd3e";
-                  }
-                  if (params.name == "正常") {
-                    return "#cfca52";
-                  }
-                  if (params.name == "不佳") {
-                    return "#59609f";
-                  }
-                }
-              }
-            }
-            // No encode specified, by default, it is '2012'.
-          }
-        ]
-      };
-      this.chartxxzt = echarts.init(document.getElementById("xxztchart"));
-      this.chartxxzt.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartxxzt.resize();
-      });
-    },
-    // 折线图
-    initChartxxztline() {
-      var option = {
-        tooltip: {
-          trigger: "axis",
-          formatter: function(datas) {
-            var res = datas[0].name + "<br/>";
-            for (var i = 0, length = datas.length; i < length; i++) {
-              var texts = "";
-              var value = datas[i].data;
-              if (value == 0) {
-                texts = "非常好";
-              } else if (value == 1) {
-                texts = "良好";
-              } else if (value == 2) {
-                texts = "正常";
-              } else if (value == 3) {
-                texts = "不佳";
-              }
-              res += texts + "<br/>";
-            }
-            return res;
-          }
-        },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: this.xxztline,
-          axisLabel: {
-            color: "#ffffff",
-            interval: 0,
-            rotate: -40
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#555971",
-              type: "solid"
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: "#555971"
-            }
-          }
-        },
-        yAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: ["4", "3", "2", "1", "0", "-1"],
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#555971",
-              type: "solid"
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: "#555971"
-            }
-          },
-          axisLabel: {
-            color: "#ffffff",
-            formatter: function(value) {
-              var texts = [];
-              if (value == 0) {
-                texts.push("非常好");
-              } else if (value == 1) {
-                texts.push("良好");
-              } else if (value == 2) {
-                texts.push("正常");
-              } else if (value == 3) {
-                texts.push("不佳");
-              }
-              return texts;
-            }
-          }
-        },
-        series: [
-          {
-            type: "line",
-            itemStyle: {
-              normal: {
-                lineStyle: {
-                  color: "#99e1ff"
-                }
-              }
-            },
-            areaStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: "#06a7ea"
-                  },
-                  {
-                    offset: 1,
-                    color: "rgba(100,178,237,0.1)"
-                  }
-                ])
-              }
-            },
-            data: this.xxztlinedata
-          }
-        ]
-      };
-      this.chartLinexxzt = echarts.init(document.getElementById("xxztline"));
-      this.chartLinexxzt.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartLinexxzt.resize();
-      });
-    },
-
-    // 柱状图
-    initChartLinejszt() {
-      var option = {
-        xAxis: {
-          data: this.jsztline,
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#555971",
-              type: "solid"
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: "#555971"
-            }
-          },
-          axisLabel: {
-            color: "#ffffff",
-            interval: 0,
-            rotate: -40
-          }
-        },
-        yAxis: {
-          axisLine: {
-            lineStyle: {
-              color: "#555971"
-            }
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#555971",
-              type: "solid"
-            }
-          },
-          boundaryGap: false,
-          data: ["3", "2", "1", "0", "-1"],
-          axisLabel: {
-            color: "#ffffff",
-            formatter: function(value) {
-              var texts = [];
-              if (value == 0) {
-                texts.push("积极");
-              } else if (value == 1) {
-                texts.push("正常");
-              } else if (value == 2) {
-                texts.push("疲惫");
-              }
-              return texts;
-            }
-          }
-        },
-        series: [
-          {
-            // For shadow
-            type: "bar",
-            itemStyle: {
-              normal: { color: "#424873" }
-            },
-            barGap: "-100%",
-            barCategoryGap: "40%",
-            data: this.dataShadow,
-            animation: false
-          },
-          {
-            type: "bar",
-            data: this.jsztlinedata,
-            barCategoryGap: "80%",
-            itemStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: "#28a2d5"
-                  },
-                  {
-                    offset: 1,
-                    color: "#ffffff"
-                  }
-                ])
-              }
-            }
-          }
-        ]
-      };
-      this.chartLinejszt = echarts.init(document.getElementById("jsztline"));
-      this.chartLinejszt.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartLinejszt.resize();
-      });
-    },
-    // 雷达图
-    initChartRadarxszt() {
-      var option = {
-        calculable: true,
-        radar: [
-          {
-            indicator: [
-              { text: "学业状态", max: 1 },
-              { text: "精神状态", max: 1 },
-              { text: "情绪状态", max: 1 },
-              { text: "人际关系", max: 1 }
-            ],
-            name: {
-              textStyle: {
-                color: "#ffffff"
-              }
-            },
-            splitArea: {
-              areaStyle: {
-                color: ["#3c447f", "#4e547b", "#323864"]
-              }
-            },
-            radius: 80
-          }
-        ],
-        series: [
-          {
-            type: "radar",
-            itemStyle: {
-              normal: {
-                areaStyle: {
-                  color: "#36d178"
-                }
-              }
-            },
-            data: [
-              {
-                value: this.xszt,
-                label: {
-                  normal: {
-                    color: "#ffffff",
-                    position: "bottom",
-                    show: true,
-                    formatter: function(params) {
-                      return params.value;
-                    }
-                  }
-                }
-              }
-            ]
-          }
-        ]
-      };
-      this.ChartRadarxszt = echarts.init(
-        document.getElementById("chartRadarBoxxszt")
-      );
-      this.ChartRadarxszt.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.ChartRadarxszt.resize();
-      });
-    },
-    //散点图
-    initChartAditor() {
-      var datas = this.Aditordata;
-      // console.log(datas)
-      var option = {
-        tooltip: {
-          // trigger: 'axis',
-          showDelay: 0,
-          formatter: function(params) {
-            if (params.value.length > 1) {
-              return (
-                params.seriesName +
-                " :<br/>" +
-                "学业状态" +
-                params.value[0] +
-                " , " +
-                "成绩" +
-                params.value[1]
-              );
-            } else {
-              return (
-                params.seriesName +
-                " :<br/>" +
-                "学业状态" +
-                params.name +
-                " , " +
-                "成绩" +
-                params.value
-              );
-            }
-          }
-        },
-        grid: {
-          left: "20%",
-          right: "20%",
-          containLabel: true,
-          bottom:"30%"
-        },
-        legend: {
-          data: this.aditorlegend,
-          left: "center",
-          top: "bottom",
-          formatter: function(item) {
-            var rt = item;
-            datas.forEach(ad => {
-              if (ad.name == item) {
-                rt = ad.name + ": 学业状态 " + ad.data[0].join(" 成绩 ");
-              }
-            });
-            return rt;
-          },
-          textStyle: {
-            color: "#ffffff",
-            fontSize: 16
-          }
-        },
-        xAxis: [
-          {
-            min: -1,
-            max: 1,
-            name: "学业状态",
-            type: "value",
-            scale: true,
-            axisLine: {
-              symbol: ["none", "arrow"]
-            },
-            axisLabel: {
-              formatter: "{value} "
-            },
-            interval: 0.1,
-            splitLine: {
-              show: true,
-              lineStyle: {
-                color: "#555772"
-              }
-            },
-            axisLine: {
-              lineStyle: {
-                color: "#ffffff",
-                width: 1.5 //这里是为了突出显示加上的
-              }
-            }
-          }
-        ],
-        yAxis: [
-          {
-            min: -1,
-            max: 1,
-            name: "成绩",
-            axisLine: {
-              symbol: ["none", "arrow"]
-            },
-            type: "value",
-            scale: true,
-            axisLabel: {
-              formatter: "{value} "
-            },
-            interval: 0.1,
-            splitLine: {
-              show: true,
-              lineStyle: {
-                color: "#555772"
-              }
-            },
-            axisLine: {
-              lineStyle: {
-                color: "#ffffff",
-                width: 1.5 //这里是为了突出显示加上的
-              }
-            }
-          }
-        ],
-        series: datas
-      };
-      this.chartAditor = echarts.init(
-        document.getElementById("chartAditorBox")
-      );
-      this.chartAditor.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartAditor.resize();
-      });
-    }
+    
   }
 };
 </script>
@@ -2215,9 +1315,12 @@ export default {
   }
   .jxzt-score{
     position: relative;
-    top: -70px;
+    // top: -70px;
+    top: -95px;
     color: #fff;
     padding-left: 20px;
+    padding-right: 20px;
+    line-height: 25px;
   }
 }
 
