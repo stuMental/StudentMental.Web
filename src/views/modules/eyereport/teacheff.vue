@@ -284,7 +284,15 @@ export default {
           date:date1
         })
       }).then(({ data }) => {
-        this.options = data.data;
+        // console.log(data.data)
+        let courseList = {}
+        data.data.forEach((v, i) => {
+          if(!(v.courseId in courseList)){
+            courseList[v.courseId] = v.courseName
+            this.options.push(v)
+          }
+        })
+        // console.log(this.options)
         this.dataForm.course = "";
       });
     },
