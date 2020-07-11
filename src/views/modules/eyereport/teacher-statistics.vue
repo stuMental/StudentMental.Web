@@ -23,8 +23,8 @@
               </el-popover>
             </el-form-item>
             <el-form-item label="教师" prop="studentName">
-              <el-select v-model="dataForm.studentid" filterable placeholder="请选择">
-                <el-option v-for="item in options" :key="item.studentNumber" :label="item.studentName" :value="item.studentNumber">
+              <el-select v-model="dataForm.teacher_id" filterable placeholder="请选择" @change="teacherCurrentChangeHandle">
+                <el-option v-for="item in options" :key="item.username" :label="item.name" :value="item.username">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -32,9 +32,9 @@
               <el-select v-model="dataForm.course_id" filterable placeholder="请选择">
                 <el-option
                   v-for="item in subjectOptions"
-                  :key="item.courseId"
-                  :label="item.courseName"
-                  :value="item.courseId"
+                  :key="item.course_id"
+                  :label="item.course_name"
+                  :value="item.course_id"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -166,7 +166,8 @@ export default {
       aditorlegend: [],
       Aditordata: [],
       // todo
-      options: [{studentNumber: "202001", studentName: "教师1"}, {studentNumber: "202002", studentName: "教师2"}],
+      // options: [{studentNumber: "202001", studentName: "教师1"}, {studentNumber: "202002", studentName: "教师2"}],
+      options :[],
       subjectOptions: [],
       chartqxzt: null,
       chartbq: null,
@@ -201,7 +202,7 @@ export default {
       dataForm: {
         datepk: "",
         deptId: 0,
-        studentid: "",
+        teacher_id: "",
         course_id: "",
         college_name: "",
         grade_name: "",
@@ -272,35 +273,20 @@ export default {
     }
   },
   methods: {
-    getcourse(deptid,date1) {
+    getcourse(deptid, teacherid) {
       this.$http({
-        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/dict"),
+        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/getCourseByTeacher"),
         method: "post",
         data: this.$http.adornData({
           deptid: deptid+"",
-          date:date1
+          teacher_id: teacherid
         })
       }).then(({ data }) => {
         this.subjectOptions = data.data;
-        console.log(this.subjectOptions)
-        this.dataForm.course = "";
+        this.dataForm.course_id = "";
       });
     }, 
-    // 教师
-    getteacher(deptid,date1) {
-      this.$http({
-        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/dict3"),
-        method: "post",
-        data: this.$http.adornData({
-          deptid: deptid+"",
-          date:date1
-        })
-      }).then(({ data }) => {
-        this.subjectOptions = data.data;
-        console.log(this.subjectOptions)
-        this.dataForm.course = "";
-      });
-    }, 
+
     //表格属性
     tableheaderCellStyle({ row, column, rowIndex, columnIndex }) {
       return "background:#303660;color:#ffffff;border:#2a2f4d";
@@ -314,6 +300,16 @@ export default {
       var date2 = "";
       date1 = this.dataForm.datepk[0];
       date2 = this.dataForm.datepk[1];
+      // 时间
+      if (this.dataForm.datepk === "") {
+        this.$message({
+          message: "日期不为空",
+          type: "error",
+          duration: 1500
+        });
+        return;
+      }
+      // 院系
       if (this.dataForm.class_name === "") {
         this.$message({
           message: "院系不为空",
@@ -322,8 +318,8 @@ export default {
         });
         return;
       }
-      // todo
-      if (this.dataForm.studentid === "") {
+      // 教师
+      if (this.dataForm.teacher_id === "") {
         this.$message({
           message: "教师不为空",
           type: "error",
@@ -340,9 +336,6 @@ export default {
         });
         return;
       }
-      console.log(this.dataForm)
-      console.log(date1)
-      console.log(date2)
       this.$http({
         url: this.$http.adornUrl("/eyereport/teacher/type"),
         method: "post",
@@ -350,7 +343,7 @@ export default {
           date1: date1,
           date2: date2,
           deptid: this.dataForm.deptId,
-          teacher_id: this.dataForm.studentid,
+          teacher_id: this.dataForm.teacher_id,
           course_id: this.dataForm.course_id,
           college_name: this.dataForm.college_name,
           grade_name: this.dataForm.grade_name,
@@ -358,47 +351,50 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          console.log(data);
+          // console.log(data);
           // rt-ch图
-          let rtch = data.data.rtch[0]
-          if(rtch){
-            this.rt = rtch.rt
-            this.ch = rtch.ch
-            this.rtchData.push([rtch.rt, rtch.ch]);
-            console.log(this.rtchData)
+          let rtch = data.data.rtch
+          if(rtch && rtch[0]){
+            this.rt = rtch[0].rt
+            this.ch = rtch[0].ch
+            this.rtchData.push([rtch[0].rt, rtch[0].ch]);
             this.initChartrtch()
           }
           // 师生行为序列图
           let ssxw = data.data.ssxw
-          ssxw.forEach((v, i) => {
-            this.ssxwData.push([i, v.type])
-          })
-          console.log(this.ssxwData)
-          this.initChartssxw()
+          if(ssxw.length != 0){
+            ssxw.forEach((v, i) => {
+              this.ssxwData.push([i, v.type])
+            })
+            this.initChartssxw()
+          }
           // 学生行为分析
           let xsxw = data.data.xsxw
-          xsxw.forEach((v, i) => {
-            this.xsxwData.push([v.action, v.percentage])
-          })
-          console.log(this.xsxwData)
-          this.initChartxsxw()
+            if(xsxw.length != 0){
+            xsxw.forEach((v, i) => {
+              this.xsxwData.push([v.action, v.percentage])
+            })
+            this.initChartxsxw()
+          }
           // 教师行为分析
           let jsxw = data.data.jsxw
-          jsxw.forEach((v, i) => {
-            this.jsxwData.push([v.action, v.percentage])
-          })
-          console.log(this.jsxwData)
-          this.initChartjsxw()
+            if(jsxw.length != 0){
+            jsxw.forEach((v, i) => {
+              this.jsxwData.push([v.action, v.percentage])
+            })
+            this.initChartjsxw()
+          }
           // 教学情绪
           let jxqx = data.data.qxzt
-          if(jxqx.length != 0){
-            this.jxqxData = [
-              {value: jxqx[0].happy_rate, name: '开心', itemStyle: {color: '#24A15A'}},
-              {value: jxqx[0].normal_rate, name: '平静', itemStyle: {color: '#D6D156'}},
-              {value: jxqx[0].angry_rate, name: '愤怒', itemStyle: {color: '#59609F'}}
-            ]
-            console.log(this.jxqxData)
-            this.initChartjxqx()
+          if(jxqx && jxqx[0]){
+            if(jxqx.length != 0){
+              this.jxqxData = [
+                {value: jxqx[0].happy_rate, name: '开心', itemStyle: {color: '#24A15A'}},
+                {value: jxqx[0].normal_rate, name: '平静', itemStyle: {color: '#D6D156'}},
+                {value: jxqx[0].angry_rate, name: '愤怒', itemStyle: {color: '#59609F'}}
+              ]
+              this.initChartjxqx()
+            }
           }
           // 教学情绪趋势图
           let jxqxline = data.data.jxqxline
@@ -413,18 +409,18 @@ export default {
               this.jxqxlineData.normal.push(v.normal_rate)
               this.jxqxlineData.angry.push(v.angry_rate)
             })
-            console.log(this.jxqxlineData)
             this.initChartjxqxline()
           }
           // 教学状态
           let jxzt = data.data.jxzt
-          if(jxzt.length != 0){
-            this.score = Number(jxzt[0]['score'])
-            this.ontime = Number(jxzt[0]['ontime'])
-            this.emotion = Number(jxzt[0]['emotion'])
-            this.behavior = Number(jxzt[0]['behavior'])
-            console.log(this.score, this.ontime, this.behavior, this.emotion)
-            this.initChartjxzt()
+          if(jxzt && jxzt[0]){
+            if(jxzt.length != 0){
+              this.score = Number(jxzt[0]['score'])
+              this.ontime = Number(jxzt[0]['ontime'])
+              this.emotion = Number(jxzt[0]['emotion'])
+              this.behavior = Number(jxzt[0]['behavior'])
+              this.initChartjxzt()
+            }
           }
           // 教学状态趋势
           let jxztline = data.data.jxztline
@@ -435,10 +431,14 @@ export default {
               this.jxztlineData.dt.push(v.dt)
               this.jxztlineData.score.push(v.score)
             })
-            console.log(this.jxztlineData)
             this.initChartjxztline()
           }
-          this.show = true;
+          if(!rtch[0] && ssxw.length == 0 && xsxw.length == 0 && jsxw.length == 0 && !jxqx[0] && jxqxline.length == 0 && !jxzt[0] && jxztline.length == 0){
+            this.$message.error("暂无数据！");
+          }
+          else{
+            this.show = true;
+          }
 
         } else {
           this.$message.error(data.msg);
@@ -1060,15 +1060,23 @@ export default {
       });
     },
 
+    // 院系改变
     deptListTreeCurrentChangeHandle(data, node) {
       this.dataForm.deptId = data.deptId;
       this.dataForm.class_name = data.name;
-      // this.getcourse(this.dataForm.deptId);
-      this.getteacher(this.dataForm.deptId);
-      // todo
-      // this.getTeacherList(this.dataForm.deptId);
+      if(this.dataForm.teacher_id != ""){
+        this.getcourse(this.dataForm.deptId, this.dataForm.teacher_id);
+      }
       this.$refs['deptpopover'].doClose()
     },
+
+    // 教师单选框改变
+    teacherCurrentChangeHandle(){
+      if(this.dataForm.teacher_id != "" && this.dataForm.deptid != ""){
+        this.getcourse(this.dataForm.deptId, this.dataForm.teacher_id);
+      }
+    },
+
     init() {
       this.iheight = window.innerHeight - 800 + "px";
       // 院系选择
@@ -1078,10 +1086,7 @@ export default {
         params: this.$http.adornParams()
       }).then(({ data }) => {
         this.deptList = treeDataTranslate(data.deptList, "deptId");
-        console.log(this.deptList)
-        this.getcourse(this.dataForm.deptId);
-        // todo
-        // this.getTeacherList(this.dataForm.deptId);
+        this.getTeacherList(this.dataForm.deptId);
       });
     },
     changedatetype(e) {
@@ -1121,11 +1126,10 @@ export default {
         this.dataForm.datepk = "";
       }
     },
-    // todo
+    // 获取教师列表
     getTeacherList(id) {
-      console.log(id)
       this.$http({
-        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/getTeacherIdList"),
+        url: this.$http.adornUrl("/sys/user/getTeacherList"),
         methods: "post",
         params: this.$http.adornParams({
           deptId: id
