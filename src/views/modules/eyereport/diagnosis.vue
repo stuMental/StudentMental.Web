@@ -8,25 +8,47 @@
             <el-form-item>日期：
               <el-date-picker value-format="yyyy-MM-dd" v-model="dataForm.date1" type="date" align="right"></el-date-picker>
             </el-form-item>
-            <el-form-item label="班年级" prop="deptName">
+            <el-form-item label="院系" prop="deptName">
               <el-popover placement="bottom-start" trigger="click" ref="deptpopover">
                 <el-tree :data="deptList" :props="deptListTreeProps" node-key="deptId" ref="deptListTree" @current-change="deptListTreeCurrentChangeHandle" :default-expand-all="false" :highlight-current="true" :expand-on-click-node="false">
                 </el-tree>
                 <el-input v-model="dataForm.deptName" slot="reference" :readonly="true" placeholder="点击选择班年级" class="dept-list__input"></el-input>
               </el-popover>
             </el-form-item>
+            <el-form-item label="学生" prop="studentName">
+              <el-select v-model="dataForm.studentid" filterable placeholder="请选择">
+                <el-option v-for="item in options" :key="item.studentNumber" :label="item.studentName" :value="item.studentNumber">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-button @click="query" :loading="false">查询</el-button>
           </center>
         </div>
       </el-form>
     </el-row>
+    <!-- 学业诊断 -->
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
-      <div :gutter="20" id="danger">
-          <el-table :data="yjData" class="tabless" height="279" border :header-cell-style="tableheaderCellStyle" :cell-style="tableCellStyles">
-            <el-table-column v-for="col in yjcols" :key="col.prop" :prop="col.prop" :label="col.label"></el-table-column>
-          </el-table>
-      </div>
-      
+      <el-row>
+        <el-col :span="10" :offset="1">
+          <div class="title">语文&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
+          <div id="chartAditorBox" class="chart-box" style="height:353px"></div>
+          <div class="chart-box" style="min-height:100px">
+            <span class="remark-student" style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">
+              学生维度：学业状态，93；成绩：95</span>
+            <span class="remark-class" style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">
+              班级维度：学业状态，93；成绩：95</span>
+          </div>
+        </el-col>
+        <el-col :span="10" :offset="1">
+          <div class="title">数学&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
+          <div id="chartAditorBox1" class="chart-box" style="height:353px"></div>
+          <div class="chart-box" style="min-height:100px">
+            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">学生维度：学业状态，93；成绩：95</span>
+            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">班级维度：学业状态，93；成绩：95</span>
+          </div>
+        </el-col> 
+      </el-row>      
+
       <el-row :gutter="20" style="height:50px">
       </el-row>
     </div>
@@ -59,7 +81,8 @@ export default {
       chartjszl: null,
       chartxljk: null,
       charrjzl: null,
-      show: false,
+      // show: false,
+      show: true,
       cols: [],
       tableData: [],
       //班级
@@ -72,9 +95,10 @@ export default {
       },
       dataForm: {
         date1: "",
-        datepk: "",
+        // datepk: "",
         deptId: 0,
-        deptName: ""
+        deptName: "",
+        studentid: ""
       },
       qxtimeline: [],
       kxdata: [],
@@ -88,7 +112,11 @@ export default {
       lhdata: [],
       xxzcdata: [],
       bjdata: [],
-      fchdata: []
+      fchdata: [],
+      options: [],
+      aditorlegend: [],
+      Aditordata: [],
+      chartAditor: null,
     };
   },
   components: {
@@ -96,6 +124,7 @@ export default {
   },
   mounted() {
     this.init();
+    this.initChartAditor();
   },
   activated() {
     // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
@@ -120,8 +149,134 @@ export default {
     if (this.chartzthistory) {
       this.chartzthistory.resize();
     }
+    if (this.chartAditor) {
+      this.chartAditor.resize();
+    }
   },
   methods: {
+    //散点图
+    initChartAditor() {
+      var datas = this.Aditordata;
+      // console.log(datas)
+      var option = {
+        tooltip: {
+          // trigger: 'axis',
+          showDelay: 0,
+          formatter: function(params) {
+            if (params.value.length > 1) {
+              return (
+                params.seriesName +
+                " :<br/>" +
+                "学业状态" +
+                params.value[0] +
+                " , " +
+                "成绩" +
+                params.value[1]
+              );
+            } else {
+              return (
+                params.seriesName +
+                " :<br/>" +
+                "学业状态" +
+                params.name +
+                " , " +
+                "成绩" +
+                params.value
+              );
+            }
+          }
+        },
+        grid: {
+          left: "10%",
+          right: "20%",
+          containLabel: true,
+          bottom:"10%"
+        },
+        legend: {
+          data: this.aditorlegend,
+          left: "center",
+          top: "bottom",
+          formatter: function(item) {
+            var rt = item;
+            datas.forEach(ad => {
+              if (ad.name == item) {
+                rt = ad.name + ": 学业状态 " + ad.data[0].join(" 成绩 ");
+              }
+            });
+            return rt;
+          },
+          textStyle: {
+            color: "#ffffff",
+            fontSize: 16
+          }
+        },
+        xAxis: [
+          {
+            min: -1,
+            max: 1,
+            name: "学业状态",
+            type: "value",
+            scale: true,
+            axisLine: {
+              symbol: ["none", "arrow"]
+            },
+            axisLabel: {
+              formatter: "{value} "
+            },
+            interval: 0.1,
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#555772"
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff",
+                width: 1.5 //这里是为了突出显示加上的
+              }
+            }
+          }
+        ],
+        yAxis: [
+          {
+            min: -1,
+            max: 1,
+            name: "成绩",
+            axisLine: {
+              symbol: ["none", "arrow"]
+            },
+            type: "value",
+            scale: true,
+            axisLabel: {
+              formatter: "{value} "
+            },
+            interval: 0.1,
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: "#555772"
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                color: "#ffffff",
+                width: 1.5 //这里是为了突出显示加上的
+              }
+            }
+          }
+        ],
+        series: datas
+      };
+      this.chartAditor = echarts.init(
+        document.getElementById("chartAditorBox")
+      );
+      this.chartAditor.setOption(option,true);
+      window.addEventListener("resize", () => {
+        this.chartAditor.resize();
+      });
+    },
+
     //表格属性
     tableheaderCellStyle({ row, column, rowIndex, columnIndex }) {
       return "background:#303660;color:#ffffff;border:#2a2f4d";
@@ -138,7 +293,24 @@ export default {
         this.$refs.clasdetail.init(this.dataForm, id);
       });
     },
-    
+    // 获取学生列表
+    getstudentlist(id) {
+      // console.log(id)
+       this.$http({
+        url: this.$http.adornUrl("/datacenter/schoolstudent/dict"),
+        methods: "get",
+        params: this.$http.adornParams({
+          deptId: id
+        })
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.options=data.data;
+        } else {
+          this.options = [];
+        }
+      });
+    },
+    // 查询
     query() {
       if (this.dataForm.date1 === "") {
         this.$message({
@@ -150,28 +322,39 @@ export default {
       }
       if (this.dataForm.deptName === "") {
         this.$message({
-          message: "班级不为空",
+          message: "院系不为空",
           type: "error",
           duration: 1500
         });
         return;
       }
+      if (this.dataForm.studentid === "") {
+        this.$message({
+          message: "学生不为空",
+          type: "error",
+          duration: 1500
+        });
+        return;
+      }
+      console.log(this.dataForm.date1, this.dataForm.deptId, this.dataForm.studentid)
       this.$http({
-        url: this.$http.adornUrl("/report/clas"),
+        url: this.$http.adornUrl("/report/pro"),
         method: "post",
         data: this.$http.adornData({
           date1: this.dataForm.date1,
-          deptid: this.dataForm.deptId
+          deptId: this.dataForm.deptId,
+          studentid: this.dataForm.studentid
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          // console.log(data)
+          // console.log(data);
           this.show = true;
-          this.cols = data.data.cols;
-          this.tableData = data.data.kqList;
-          this.yjData = data.data.yjData;
-          this.yjcols = data.data.yjcols;
-          
+
+          this.aditorlegend = data.data.aditorlegend;
+          this.Aditordata = data.data.Aditordata;
+
+          this.initChartAditor();
+
         } else {
           this.$message.error(data.msg);
         }
@@ -191,6 +374,7 @@ export default {
       }).then(({ data }) => {
         this.deptList = treeDataTranslate(data.deptList, "deptId");
       });
+      this.getstudentlist(this.dataForm.deptId)
     }
   }
 };
@@ -417,4 +601,29 @@ export default {
     border: 0;
   }
 }
+  .remark-student, .remark-class{
+    line-height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .remark-student::before{
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #A63738;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .remark-class::before{
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #2F4555;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
 </style>
