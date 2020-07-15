@@ -29,14 +29,24 @@
     <!-- 学业诊断 -->
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
       <el-row>
-        <el-col :span="10" :offset="1">
-          <div class="title">语文&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
-          <div id="chartAditorBox" class="chart-box" style="height:353px"></div>
+        <el-col :span="10" :offset="1" v-for="(course, i) in classData" :key="i">
+          <!-- <div class="title">语文&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div> -->
+          <div class="title">{{course.course_name}}&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
+          <div :id="'chart'+i" :ref="'chart' + i" class="chart-box" style="height:353px"></div>
           <div class="chart-box" style="min-height:100px">
             <span class="remark-student" style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">
-              学生维度：学业状态，93；成绩：95</span>
+              学生维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
+              <!-- 学生维度：学业状态，93；成绩：95</span> -->
             <span class="remark-class" style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">
-              班级维度：学业状态，93；成绩：95</span>
+              班级维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
+          </div>
+        </el-col>
+        <!-- <el-col :span="10" :offset="1">
+          <div class="title">数学&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
+          <div id="chartAditorBox1" class="chart-box" style="height:353px"></div>
+          <div class="chart-box" style="min-height:100px">
+            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">学生维度：学业状态，93；成绩：95</span>
+            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">班级维度：学业状态，93；成绩：95</span>
           </div>
         </el-col>
         <el-col :span="10" :offset="1">
@@ -46,7 +56,7 @@
             <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">学生维度：学业状态，93；成绩：95</span>
             <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">班级维度：学业状态，93；成绩：95</span>
           </div>
-        </el-col> 
+        </el-col>  -->
       </el-row>      
 
       <el-row :gutter="20" style="height:50px">
@@ -81,8 +91,7 @@ export default {
       chartjszl: null,
       chartxljk: null,
       charrjzl: null,
-      // show: false,
-      show: true,
+      show: false,
       cols: [],
       tableData: [],
       //班级
@@ -116,7 +125,8 @@ export default {
       options: [],
       aditorlegend: [],
       Aditordata: [],
-      chartAditor: null,
+      chartAditor: [],
+      classData: []
     };
   },
   components: {
@@ -124,7 +134,6 @@ export default {
   },
   mounted() {
     this.init();
-    this.initChartAditor();
   },
   activated() {
     // 由于给echart添加了resize事件, 在组件激活时需要重新resize绘画一次, 否则出现空白bug
@@ -149,15 +158,16 @@ export default {
     if (this.chartzthistory) {
       this.chartzthistory.resize();
     }
-    if (this.chartAditor) {
-      this.chartAditor.resize();
-    }
+    this.chartAditor.forEach((v, i) => {
+      if (this.chartAditor[i]) {
+        this.chartAditor[i].resize();
+      }
+    })
+
   },
   methods: {
     //散点图
-    initChartAditor() {
-      var datas = this.Aditordata;
-      // console.log(datas)
+    initChart(i) {
       var option = {
         tooltip: {
           // trigger: 'axis',
@@ -166,7 +176,7 @@ export default {
             if (params.value.length > 1) {
               return (
                 params.seriesName +
-                " :<br/>" +
+                " <br/>" +
                 "学业状态" +
                 params.value[0] +
                 " , " +
@@ -192,24 +202,24 @@ export default {
           containLabel: true,
           bottom:"10%"
         },
-        legend: {
-          data: this.aditorlegend,
-          left: "center",
-          top: "bottom",
-          formatter: function(item) {
-            var rt = item;
-            datas.forEach(ad => {
-              if (ad.name == item) {
-                rt = ad.name + ": 学业状态 " + ad.data[0].join(" 成绩 ");
-              }
-            });
-            return rt;
-          },
-          textStyle: {
-            color: "#ffffff",
-            fontSize: 16
-          }
-        },
+        // legend: {
+        //   data: this.aditorlegend,
+        //   left: "center",
+        //   top: "bottom",
+        //   formatter: function(item) {
+        //     var rt = item;
+        //     datas.forEach(ad => {
+        //       if (ad.name == item) {
+        //         rt = ad.name + ": 学业状态 " + ad.data[0].join(" 成绩 ");
+        //       }
+        //     });
+        //     return rt;
+        //   },
+        //   textStyle: {
+        //     color: "#ffffff",
+        //     fontSize: 16
+        //   }
+        // },
         xAxis: [
           {
             min: -1,
@@ -266,15 +276,34 @@ export default {
             }
           }
         ],
-        series: datas
+        series: [{
+            type: 'scatter',
+            name: '班级维度：',
+            data: [[this.classData[i]['study_level'], this.classData[i]['grade_level']]],
+            itemStyle: {
+              color: '#2F4556'
+            }
+          },{
+            type: 'scatter',
+            name: '学生维度：',
+            data: [[0.1, 0.3]],
+            itemStyle: {
+              color: '#A63738'
+            }
+          }
+        ]
       };
-      this.chartAditor = echarts.init(
-        document.getElementById("chartAditorBox")
-      );
-      this.chartAditor.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartAditor.resize();
-      });
+
+      // 有坑，动态生成的dom获取不到，外面要加nextTick
+      this.$nextTick(() => {
+        this.chartAditor[i] = echarts.init(
+          document.getElementById("chart" + i)
+        );
+        this.chartAditor[i].setOption(option,true);
+        window.addEventListener("resize", () => {
+          this.chartAditor[i].resize();
+        });
+      })
     },
 
     //表格属性
@@ -338,23 +367,27 @@ export default {
       }
       console.log(this.dataForm.date1, this.dataForm.deptId, this.dataForm.studentid)
       this.$http({
-        url: this.$http.adornUrl("/report/pro"),
+        url: this.$http.adornUrl("/report/diagnosis"),
         method: "post",
         data: this.$http.adornData({
-          date1: this.dataForm.date1,
-          deptId: this.dataForm.deptId,
+          dt: this.dataForm.date1,
+          deptid: this.dataForm.deptId,
           studentid: this.dataForm.studentid
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          // console.log(data);
+          console.log(data);
+          this.classData = data.data.class;
+          // this.studentData = data.data.student;
           this.show = true;
-
-          this.aditorlegend = data.data.aditorlegend;
-          this.Aditordata = data.data.Aditordata;
-
-          this.initChartAditor();
-
+          // 图表渲染
+          if(this.classData.length != 0){
+            this.classData.forEach((v, i) => {
+              this.chartAditor.push(i)
+              this.initChart(i);
+            })
+          }
+          
         } else {
           this.$message.error(data.msg);
         }
@@ -413,6 +446,7 @@ export default {
   }
   .el-row {
     top: 80px;
+    background-color: #242636;  
   }
   .el-table::before {
     background: none;
