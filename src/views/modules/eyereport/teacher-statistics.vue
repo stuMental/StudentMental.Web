@@ -363,16 +363,37 @@ export default {
           // 师生行为序列图
           let ssxw = data.data.ssxw
           if(ssxw.length != 0){
+            let x = 0
+            let y = 0
+            let cnt = 1
+            this.ssxwData.push([0, 0])
             ssxw.forEach((v, i) => {
-              this.ssxwData.push([i, v.type])
+              // 从第二个开始
+              if(i != 0){
+                // 跟前一个不等
+                if(v['type'] != ssxw[i - 1]['type']){
+                  if (ssxw[i - 1]['type'] == 0){
+                    x += cnt
+                  }
+                  else{
+                    y += cnt
+                  }
+                  cnt = 1
+                  this.ssxwData.push([x, y])
+                }
+                else{
+                  cnt += 1
+                }
+              }
             })
+            // console.log(this.ssxwData)
             this.initChartssxw()
           }
           // 学生行为分析
           let xsxw = data.data.xsxw
             if(xsxw.length != 0){
             xsxw.forEach((v, i) => {
-              this.xsxwData.push([v.action, v.percentage])
+              this.xsxwData.push([v.action, v.percentage * 100])
             })
             this.initChartxsxw()
           }
@@ -380,7 +401,7 @@ export default {
           let jsxw = data.data.jsxw
             if(jsxw.length != 0){
             jsxw.forEach((v, i) => {
-              this.jsxwData.push([v.action, v.percentage])
+              this.jsxwData.push([v.action, v.percentage * 100])
             })
             this.initChartjsxw()
           }
@@ -404,11 +425,15 @@ export default {
           this.jxqxlineData.angry = []
           if(jxqxline.length != 0){
             jxqxline.forEach((v, i) => {
+              v.happy_rate *= 100
+              v.normal_rate *= 100
+              v.angry_rate *= 100
               this.jxqxlineData.dt.push(v.dt)
-              this.jxqxlineData.happy.push(v.happy_rate)
-              this.jxqxlineData.normal.push(v.normal_rate)
-              this.jxqxlineData.angry.push(v.angry_rate)
+              this.jxqxlineData.happy.push(v.happy_rate.toFixed(2))
+              this.jxqxlineData.normal.push(v.normal_rate.toFixed(2))
+              this.jxqxlineData.angry.push(v.angry_rate.toFixed(2))
             })
+            // console.log(this.jxqxlineData)
             this.initChartjxqxline()
           }
           // 教学状态
@@ -529,12 +554,13 @@ export default {
           top: '20',
         },
         xAxis: {
-            type: "value",
-            // type: "category",
-            // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            axisLabel: {
-              color: "#ffffff",
-            },
+          name: "T",
+          type: "value",
+          // type: "category",
+          // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          axisLabel: {
+            color: "#ffffff",
+          },
           splitLine: {
             show: true,
             lineStyle: {
@@ -549,12 +575,13 @@ export default {
             },
         },
         yAxis: {
-            type: 'value',
-            axisLine: {
-              lineStyle: {
-                color: '#fff',
-              }
-            },
+          name: "S",
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#fff',
+            }
+          },
           boundaryGap: false,
           axisLabel: {
             color: "#ffffff",
@@ -576,10 +603,8 @@ export default {
         //     trigger: 'axis'
         // },
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '3%',
-            containLabel: true
+          left: '18%',
+          bottom:'10%'
         },
         series: [
             {
@@ -625,12 +650,12 @@ export default {
             },
         },
         yAxis: {
-            type: 'value',
-            axisLine: {
-              lineStyle: {
-                color: '#fff',
-              }
-            },
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#fff',
+            }
+          },
           boundaryGap: false,
           axisLabel: {
             color: "#ffffff",
@@ -642,12 +667,22 @@ export default {
               type: "solid"
             }
           },
+          axisLabel: {
+            show: true,  
+            interval: 'auto',
+            color: "#ffffff",
+            formatter : '{value} %'
+          }, 
           axisLine: {
             lineStyle: {
               color: "#555971"
             }
           },
-          
+ 
+        },
+        grid: {
+          left: '18%',
+          // bottom:'28%'
         },
         series: [{
             // data: [['发言', 10], ['发言2', 30], ['发言3', 10], ['发言4', 50]],
@@ -716,7 +751,17 @@ export default {
               color: "#555971"
             }
           },
+          axisLabel: {
+            show: true,  
+            interval: 'auto',
+            color: "#ffffff",
+            formatter : '{value} %'
+          }, 
           
+        },
+        grid: {
+          left: '18%',
+          // bottom:'28%'
         },
         series: [{
             // data: [10, 30, 10, 50, 20],
@@ -813,7 +858,8 @@ export default {
         },
         backgroundColor: '#2f345c',
         tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
+            formatter : '{a0}: {c0} %<br />{a1}: {c1} %<br />{a2}: {c2} %<br />'
         },
         legend: {
             orient: 'horizontal',
@@ -823,12 +869,12 @@ export default {
                 color: '#fff',
             },
         },
-        grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '50',
-            containLabel: true
-        },
+        // grid: {
+        //     left: '3%',
+        //     right: '4%',
+        //     bottom: '50',
+        //     containLabel: true
+        // },
         xAxis: {
             type: "category",
             boundaryGap: false,
@@ -869,6 +915,12 @@ export default {
               color: "#555971"
             }
           },
+          axisLabel: {
+            show: true,  
+            interval: 'auto',
+            color: "#ffffff",
+            formatter : '{value} %'
+          }, 
           
         },
         grid: {
