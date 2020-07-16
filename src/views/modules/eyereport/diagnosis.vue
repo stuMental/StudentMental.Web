@@ -30,33 +30,15 @@
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
       <el-row>
         <el-col :span="10" :offset="1" v-for="(course, i) in classData" :key="i">
-          <!-- <div class="title">语文&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div> -->
           <div class="title">{{course.course_name}}&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
           <div :id="'chart'+i" :ref="'chart' + i" class="chart-box" style="height:353px"></div>
           <div class="chart-box" style="min-height:100px">
-            <span class="remark-student" style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">
-              学生维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
-              <!-- 学生维度：学业状态，93；成绩：95</span> -->
-            <span class="remark-class" style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">
+            <span class="remark-student" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+              学生维度：学业状态，{{studentData[i].study_level}}；成绩：{{studentData[i].grade_level}}</span>
+            <span class="remark-class" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               班级维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
           </div>
         </el-col>
-        <!-- <el-col :span="10" :offset="1">
-          <div class="title">数学&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
-          <div id="chartAditorBox1" class="chart-box" style="height:353px"></div>
-          <div class="chart-box" style="min-height:100px">
-            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">学生维度：学业状态，93；成绩：95</span>
-            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">班级维度：学业状态，93；成绩：95</span>
-          </div>
-        </el-col>
-        <el-col :span="10" :offset="1">
-          <div class="title">数学&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
-          <div id="chartAditorBox1" class="chart-box" style="height:353px"></div>
-          <div class="chart-box" style="min-height:100px">
-            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">学生维度：学业状态，93；成绩：95</span>
-            <span style="color:#ffffff;font-size:15px;float: left;text-align: center;width: 100%;">班级维度：学业状态，93；成绩：95</span>
-          </div>
-        </el-col>  -->
       </el-row>      
 
       <el-row :gutter="20" style="height:50px">
@@ -126,7 +108,8 @@ export default {
       aditorlegend: [],
       Aditordata: [],
       chartAditor: [],
-      classData: []
+      classData: [],
+      studentData: []
     };
   },
   components: {
@@ -197,8 +180,8 @@ export default {
           }
         },
         grid: {
-          left: "10%",
-          right: "20%",
+          left: "5%",
+          right: "18%",
           containLabel: true,
           bottom:"10%"
         },
@@ -279,14 +262,17 @@ export default {
         series: [{
             type: 'scatter',
             name: '班级维度：',
+            symbolSize: 20,
             data: [[this.classData[i]['study_level'], this.classData[i]['grade_level']]],
             itemStyle: {
-              color: '#2F4556'
+              // color: '#2F4556'
+              color: '#54738B'
             }
           },{
             type: 'scatter',
             name: '学生维度：',
-            data: [[0.1, 0.3]],
+            symbolSize: 20,
+            data: [[this.studentData[i]['study_level'], this.studentData[i]['grade_level']]],
             itemStyle: {
               color: '#A63738'
             }
@@ -365,7 +351,7 @@ export default {
         });
         return;
       }
-      console.log(this.dataForm.date1, this.dataForm.deptId, this.dataForm.studentid)
+      // console.log(this.dataForm.date1, this.dataForm.deptId, this.dataForm.studentid)
       this.$http({
         url: this.$http.adornUrl("/report/diagnosis"),
         method: "post",
@@ -376,16 +362,19 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          console.log(data);
+          // console.log(data);
           this.classData = data.data.class;
-          // this.studentData = data.data.student;
+          this.studentData = data.data.student;
           this.show = true;
           // 图表渲染
-          if(this.classData.length != 0){
+          if(this.classData.length != 0 && this.classData.length == this.studentData.length){
             this.classData.forEach((v, i) => {
               this.chartAditor.push(i)
               this.initChart(i);
             })
+          }
+          else{
+            this.$message.error("暂无数据！");
           }
           
         } else {
@@ -638,7 +627,7 @@ export default {
   .remark-student, .remark-class{
     line-height: 20px;
     display: flex;
-    justify-content: center;
+    // justify-content: center;
     align-items: center;
     margin-bottom: 5px;
   }
@@ -656,7 +645,8 @@ export default {
     display: inline-block;
     width: 20px;
     height: 20px;
-    background-color: #2F4555;
+    // background-color: #2F4555;
+    background-color: #54738B;
     border-radius: 50%;
     margin-right: 10px;
   }
