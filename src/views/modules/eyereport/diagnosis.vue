@@ -2,11 +2,11 @@
   <div class="pro-main">
     <img src="~@/assets/img/diagnosis.png" style="position: absolute;width: 100%;" />
     <el-row>
-      <el-form :inline="true">
+      <el-form :inline="true" size="medium">
         <div>
           <center>
             <el-form-item>日期：
-              <el-date-picker value-format="yyyy-MM-dd" v-model="dataForm.date1" type="date" align="right"></el-date-picker>
+              <el-date-picker value-format="yyyy-MM-dd" v-model="dataForm.date1" type="date" align="right" @change="datechange()"></el-date-picker>
             </el-form-item>
             <el-form-item label="院系" prop="deptName">
               <el-popover placement="bottom-start" trigger="click" ref="deptpopover">
@@ -21,6 +21,16 @@
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="科目" prop="course">
+              <el-select v-model="dataForm.course" placeholder="请选择科目">
+                <el-option
+                  v-for="item in options2"
+                  :key="item.courseId"
+                  :label="item.courseName"
+                  :value="item.courseName"
+                ></el-option>
+              </el-select>
+            </el-form-item>
             <el-button @click="query" :loading="false">查询</el-button>
           </center>
         </div>
@@ -29,20 +39,21 @@
     <!-- 学业诊断 -->
     <div :style="{visibility: show ? 'visible' : 'hidden'}">
       <el-row>
-        <el-col :span="10" :offset="1" v-for="(course, i) in classData" :key="i">
-          <div class="title">{{course.course_name}}&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div>
+        <el-col :span="18" :offset="3" v-for="(course, i) in classData" :key="i">
+          <!-- <div class="title">{{course.course_name}}&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div> -->
           <div :id="'chart'+i" :ref="'chart' + i" class="chart-box" style="height:353px"></div>
           <div class="chart-box" style="min-height:100px">
-            <span class="remark-student" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+            <span v-if="studentData[i]['study_level']" class="remark-student" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               学生维度：学业状态，{{studentData[i].study_level}}；成绩：{{studentData[i].grade_level}}</span>
+            <span v-else class="remark-student" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+              学生维度：暂无数据</span>
             <span class="remark-class" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               班级维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
           </div>
         </el-col>
       </el-row>      
 
-      <el-row :gutter="20" style="height:50px">
-      </el-row>
+      <!-- <el-row :gutter="20" style="height:50px"></el-row> -->
     </div>
   </div>
 </template>
@@ -89,7 +100,8 @@ export default {
         // datepk: "",
         deptId: 0,
         deptName: "",
-        studentid: ""
+        studentid: "",
+        course: ""
       },
       qxtimeline: [],
       kxdata: [],
@@ -109,7 +121,8 @@ export default {
       Aditordata: [],
       chartAditor: [],
       classData: [],
-      studentData: []
+      studentData: [],
+      options2: []
     };
   },
   components: {
@@ -149,6 +162,9 @@ export default {
 
   },
   methods: {
+    datechange(){
+      this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+    },
     //散点图
     initChart(i) {
       var option = {
@@ -180,8 +196,8 @@ export default {
           }
         },
         grid: {
-          left: "5%",
-          right: "18%",
+          left: "20%",
+          right: "20%",
           containLabel: true,
           bottom:"10%"
         },
@@ -351,14 +367,23 @@ export default {
         });
         return;
       }
-      // console.log(this.dataForm.date1, this.dataForm.deptId, this.dataForm.studentid)
+      if (this.dataForm.course === "") {
+        this.$message({
+          message: "科目不为空",
+          type: "error",
+          duration: 1500
+        });
+        return;
+      }
+      // console.log(this.dataForm.date1, this.dataForm.deptId, this.dataForm.studentid, this.dataForm.course)
       this.$http({
         url: this.$http.adornUrl("/report/diagnosis"),
         method: "post",
         data: this.$http.adornData({
           dt: this.dataForm.date1,
           deptid: this.dataForm.deptId,
-          studentid: this.dataForm.studentid
+          studentid: this.dataForm.studentid,
+          course_name: this.dataForm.course,
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
@@ -367,11 +392,16 @@ export default {
           this.studentData = data.data.student;
           this.show = true;
           // 图表渲染
-          if(this.classData.length != 0 && this.classData.length == this.studentData.length){
-            this.classData.forEach((v, i) => {
-              this.chartAditor.push(i)
-              this.initChart(i);
-            })
+          if(this.classData.length != 0 || this.studentData.length != 0){
+            // this.classData.forEach((v, i) => {
+            //   this.chartAditor.push(i)
+            //   this.initChart(i);
+            // })
+            this.chartAditor.push(0)
+            if (this.studentData.length == 0){
+              this.studentData.push({study_level:null, grade_level:null})
+            }
+            this.initChart(0)
           }
           else{
             this.$message.error("暂无数据！");
@@ -386,6 +416,7 @@ export default {
       this.dataForm.deptId = data.deptId;
       this.dataForm.deptName = data.name;
       //this.dataForm.DataStus[node].deptName = data.name;
+      this.getcourse(this.dataForm.deptId,this.dataForm.date1);
       this.$refs['deptpopover'].doClose()
     },
     init() {
@@ -397,12 +428,37 @@ export default {
         this.deptList = treeDataTranslate(data.deptList, "deptId");
       });
       this.getstudentlist(this.dataForm.deptId)
-    }
+      this.getcourse(this.dataForm.deptId);
+    },
+    getcourse(deptid,date1) {
+      this.$http({
+        url: this.$http.adornUrl("/datacenter/StudentCourseInfo/dict"),
+        method: "post",
+        data: this.$http.adornData({
+          deptid: deptid+"",
+          date:date1
+        })
+      }).then(({ data }) => {
+        // console.log(data.data)
+        let courseList = {}
+        data.data.forEach((v, i) => {
+          if(!(v.courseId in courseList)){
+            courseList[v.courseId] = v.courseName
+            this.options2.push(v)
+          }
+        })
+        // console.log(this.options)
+        this.dataForm.course = "";
+      });
+    },
   }
 };
 </script>
 
-<style  lang="scss" >
+<style  lang="scss">
+  body /deep/ .el-date-editor.el-input, body /deep/ .el-date-editor.el-input__inner{
+    width: 200px !important;
+  }
 .pro-main {
     #danger{
         margin: 100px 150px 0;
@@ -591,10 +647,6 @@ export default {
   .el-month-table td.in-range div,
   .el-month-table td.in-range div:hover {
     background-color: #0c1352;
-  }
-  .el-date-editor.el-input,
-  .el-date-editor.el-input__inner {
-    width: 350px;
   }
   .el-date-editor .el-range-separator {
     padding: 0;
