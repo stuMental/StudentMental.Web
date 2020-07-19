@@ -604,6 +604,7 @@ export default {
         // },
         grid: {
           left: '18%',
+          right: '8%',
           bottom:'10%'
         },
         series: [
@@ -682,6 +683,7 @@ export default {
         },
         grid: {
           left: '18%',
+          right: '8%',
           // bottom:'28%'
         },
         series: [{
@@ -761,6 +763,7 @@ export default {
         },
         grid: {
           left: '18%',
+          right: '8%',
           // bottom:'28%'
         },
         series: [{
@@ -925,6 +928,7 @@ export default {
         },
         grid: {
           left: '18%',
+          right: '8%',
           bottom:'38%'
         },
         series: [
@@ -1082,6 +1086,7 @@ export default {
         },
         grid: {
           left: '18%',
+          right: '8%',
           bottom:'28%'
         },
         tooltip: {

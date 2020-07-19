@@ -43,9 +43,9 @@
           <!-- <div class="title">{{course.course_name}}&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div> -->
           <div :id="'chart'+i" :ref="'chart' + i" class="chart-box" style="height:353px"></div>
           <div class="chart-box" style="min-height:100px">
-            <span v-if="studentData[i]['study_level']" class="remark-student" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+            <span v-if="studentData[i]['study_level']" class="remark-student" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               学生维度：学业状态，{{studentData[i].study_level}}；成绩：{{studentData[i].grade_level}}</span>
-            <span v-else class="remark-student" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+            <span v-else class="remark-student" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               学生维度：暂无数据</span>
             <span class="remark-class" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               班级维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
