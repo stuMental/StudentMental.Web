@@ -258,7 +258,8 @@ export default {
   },
   methods: {
     datechange(){
-      this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      // this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      this.getcourse(this.dataForm.deptId);
     },
     addDate(date, days) {
       var d = new Date(date);
@@ -293,6 +294,7 @@ export default {
       }).then(({ data }) => {
         // console.log(data.data)
         let courseList = {}
+        this.options = []
         data.data.forEach((v, i) => {
           if(!(v.courseId in courseList)){
             courseList[v.courseId] = v.courseName
@@ -315,7 +317,8 @@ export default {
     deptListTreeCurrentChangeHandle(data, node) {
       this.dataForm.deptId = data.deptId;
       this.dataForm.deptName = data.name;
-      this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      // this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      this.getcourse(this.dataForm.deptId);
       this.$refs["deptpopover"].doClose();
     },
     query() {

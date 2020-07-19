@@ -163,7 +163,8 @@ export default {
   },
   methods: {
     datechange(){
-      this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      // this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      this.getcourse(this.dataForm.deptId);
     },
     //散点图
     initChart(i) {
@@ -416,7 +417,8 @@ export default {
       this.dataForm.deptId = data.deptId;
       this.dataForm.deptName = data.name;
       //this.dataForm.DataStus[node].deptName = data.name;
-      this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      // this.getcourse(this.dataForm.deptId,this.dataForm.date1);
+      this.getcourse(this.dataForm.deptId);
       this.$refs['deptpopover'].doClose()
     },
     init() {
@@ -441,6 +443,7 @@ export default {
       }).then(({ data }) => {
         // console.log(data.data)
         let courseList = {}
+        this.options2 = []
         data.data.forEach((v, i) => {
           if(!(v.courseId in courseList)){
             courseList[v.courseId] = v.courseName
