@@ -37,7 +37,7 @@
       </el-form>
     </el-row>
     <!-- 学业诊断 -->
-    <div :style="{visibility: show ? 'visible' : 'hidden'}">
+    <div :style="{visibility: show ? 'visible' : 'hidden'}" style="margin-top:30px;">
       <el-row>
         <el-col :span="18" :offset="3" v-for="(course, i) in classData" :key="i">
           <!-- <div class="title">{{course.course_name}}&nbsp;<img src="~@/assets/img/xyztfxico.png" /></div> -->
@@ -47,7 +47,7 @@
               学生维度：学业状态，{{studentData[i].study_level}}；成绩：{{studentData[i].grade_level}}</span>
             <span v-else class="remark-student" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               学生维度：暂无数据</span>
-            <span class="remark-class" style="padding-left:15%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+            <span class="remark-class" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               班级维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
           </div>
         </el-col>

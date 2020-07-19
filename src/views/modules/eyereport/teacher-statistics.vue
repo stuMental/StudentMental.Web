@@ -67,19 +67,19 @@
         <el-col :span="11" style="padding-left: 0px;">
           <div class="title" style="height:25px">&nbsp;</div>
           <div style="background-color: #30345C;">
-            <div id="ssxwchart" class="chart-box" style="width: 87%;"></div>
+            <div id="ssxwchart" class="chart-box" style="width: 100%;"></div>
           </div>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="11" :offset="1" style="padding-right: 0px;">
           <div style="width: 100%; background-color: #30345C; border-right: 2px solid #424562;">
-            <div id="xsxwchart" class="chart-box" style="width: 87%;"></div>
+            <div id="xsxwchart" class="chart-box" style="width: 100%;"></div>
           </div>
         </el-col>
         <el-col :span="11" style="padding-left: 0px; ">
           <div style="width: 100%; background-color: #30345C;">
-            <div id="jsxwchart" class="chart-box" style="width: 87%;"></div>
+            <div id="jsxwchart" class="chart-box" style="width: 100%;"></div>
           </div>
         </el-col>
       </el-row>
@@ -93,7 +93,7 @@
         <el-col :span="11" style="padding-left: 0px;">
           <div class="title" style="height:25px">&nbsp;</div>
           <div style="width: 100%; background-color: #30345C;">
-            <div id="jxqxlinechart" class="chart-box" style="width: 87%;"></div>
+            <div id="jxqxlinechart" class="chart-box" style="width: 100%;"></div>
           </div>
         </el-col>
       </el-row>
@@ -129,7 +129,7 @@
         <el-col :span="11" style="padding-left: 0px; ">
           <div class="title" style="height:25px">&nbsp;</div>
           <div style="width: 100%; background-color: #30345C;">
-            <div id="jxztchartline" class="chart-box" style="height:320px; width: 87%;"></div>
+            <div id="jxztchartline" class="chart-box" style="height:320px; width: 100%;"></div>
           </div>
         </el-col>
       </el-row>
