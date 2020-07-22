@@ -47,8 +47,10 @@
               学生维度：学业状态，{{studentData[i].study_level}}；成绩：{{studentData[i].grade_level}}</span>
             <span v-else class="remark-student" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               学生维度：暂无数据</span>
-            <span class="remark-class" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+            <span v-if="classData[i]['study_level']" class="remark-class" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
               班级维度：学业状态，{{course.study_level}}；成绩：{{course.grade_level}}</span>
+            <span v-else class="remark-class" style="padding-left:30%;color:#ffffff;font-size:15px;float: left;width: 100%;">
+              班级维度：暂无数据</span>
           </div>
         </el-col>
       </el-row>      
@@ -401,6 +403,9 @@ export default {
             this.chartAditor.push(0)
             if (this.studentData.length == 0){
               this.studentData.push({study_level:null, grade_level:null})
+            }
+            if (this.classData.length == 0) {
+              this.classData.push({study_level:null, grade_level:null})
             }
             this.initChart(0)
           }

@@ -555,6 +555,9 @@ export default {
         },
         xAxis: {
           name: "T",
+          nameTextStyle: {
+            color: "#fff",
+          },
           type: "value",
           // type: "category",
           // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -568,14 +571,17 @@ export default {
               type: "solid"
             }
           },
-            axisLine: {
-              lineStyle: {
-                color: "#555971"
-              }
-            },
+          axisLine: {
+            lineStyle: {
+              color: "#555971"
+            }
+          },
         },
         yAxis: {
           name: "S",
+          nameTextStyle: {
+            color: "#fff",
+          },
           type: 'value',
           axisLine: {
             lineStyle: {
