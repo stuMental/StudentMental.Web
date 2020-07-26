@@ -9,7 +9,9 @@
     <div class="site-navbar__body clearfix">
       <el-menu
         class="site-navbar__menu"
-        mode="horizontal" >
+        id="menu-left"
+        mode="horizontal"
+        @open="handleOpen">
         <el-menu-item class="site-navbar__switch" index="0" @click="sidebarFold = !sidebarFold">
           <icon-svg name="zhedie"></icon-svg>
         </el-menu-item>
@@ -49,7 +51,8 @@
     data () {
       return {
         webname:"",
-        updatePassowrdVisible: false
+        updatePassowrdVisible: false,
+        nav_mode_open: false
       }
     },
     components: {
@@ -75,6 +78,11 @@
       this.getwebname()
     },
     methods: {
+      // 菜单展开
+      handleOpen(){
+        console.log(this.nav_mode_open)
+        this.nav_mode_open = true
+      },
 getwebname(){
        this.$http({
         url: this.$http.adornUrl("/webname"),

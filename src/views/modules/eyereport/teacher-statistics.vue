@@ -48,7 +48,7 @@
         <el-col :span="11" :offset="1" style="padding-right: 0px;">
           <div class="title">教师互动类型</div>
           <div class="jxms">
-            <div class="jxms-box" style="width: 30%">
+            <div class="jxms-box" style="width: 38%; padding-left:30px;">
               <div class="jxms-img">
                 <img src="~@/assets/img/jxms.jpg">
               </div>
@@ -58,7 +58,8 @@
               <p class="p-top">Ch：{{ ch }}</p>
               <p>师生行为转化率</p>
             </div>
-            <div class="jxms-right" style="width: 70%">
+            <div class="jxms-right" style="width: 62%">
+              <!-- <div id="rtchchart" class="chart-box" ></div> -->
               <div id="rtchchart" class="chart-box" :style="{backgroundImage:'url('+require('../../../assets/img/rtch.png')+')'}"></div>
             </div>
           </div>
@@ -73,7 +74,7 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="11" :offset="1" style="padding-right: 0px;">
-          <div style="width: 100%; background-color: #30345C; border-right: 2px solid #424562;">
+          <div style="width: 100%; background-color: #30345C; border-right: 2px solid #424562; padding-left: 30px;">
             <div id="xsxwchart" class="chart-box" style="width: 100%;"></div>
           </div>
         </el-col>
@@ -93,7 +94,7 @@
         <el-col :span="11" style="padding-left: 0px;">
           <div class="title" style="height:25px">&nbsp;</div>
           <div style="width: 100%; background-color: #30345C;">
-            <div id="jxqxlinechart" class="chart-box" style="width: 100%;"></div>
+            <div id="jxqxlinechart" class="chart-box" style="width: 100%; overflow:hidden;"></div>
           </div>
         </el-col>
       </el-row>
@@ -222,7 +223,14 @@ export default {
       emotion: null,
       behavior: null,
       jxqxline: [],
-      jxztlineData: {}
+      jxztlineData: {},
+      ssxwoption: {},
+      xsxwoption: {},
+      jsxwoption: {},
+      jxqxoption: {},
+      // jxqxlineData: {},
+      jxztoption: {},
+      jxztlineoption: {}
     };
   },
   mounted() {
@@ -473,7 +481,7 @@ export default {
 
     // rt-ch图
     initChartrtch(){
-      var option = {
+      this.rtchoption = {
         title:{
             text: 'Rt-Ch图',  
             textStyle: {
@@ -525,6 +533,9 @@ export default {
             }
           },
         },
+        grid: {
+          right: '10%'
+        },
         series: [{
             symbolSize: 20,
             // data: [
@@ -535,16 +546,16 @@ export default {
         }]
       };
 
-      this.chartjxqx = echarts.init(document.getElementById("rtchchart"));
-      this.chartjxqx.setOption(option,true);
+      this.chartrtch = echarts.init(document.getElementById("rtchchart"));
+      this.chartrtch.setOption(this.rtchoption,true);
       window.addEventListener("resize", () => {
-        this.chartjxqx.resize();
+        this.chartrtch.resize();
       });
     },
 
     // 师生行为分析
     initChartssxw(){
-      var option = {
+      this.ssxwoption = {
         title:{
           text: '师生(S-T)行为序列',  
           textStyle: {
@@ -609,8 +620,9 @@ export default {
         //     trigger: 'axis'
         // },
         grid: {
-          left: '18%',
+          left: '15%',
           right: '8%',
+          // right: this.$store.state.common.sidebarFold ? '8%' : '18%',
           bottom:'10%'
         },
         series: [
@@ -625,8 +637,8 @@ export default {
         ]
       };
 
-      this.chartjxqx = echarts.init(document.getElementById("ssxwchart"));
-      this.chartjxqx.setOption(option,true);
+      this.chartssxw = echarts.init(document.getElementById("ssxwchart"));
+      this.chartssxw.setOption(this.ssxwoption,true);
       window.addEventListener("resize", () => {
         this.chartjxqx.resize();
       });
@@ -634,7 +646,7 @@ export default {
 
     // 学生行为分析
     initChartxsxw(){
-      var option = {
+      this.xsxwoption = {
         title:{
           text: '学生行为分析',  
           textStyle: {
@@ -688,8 +700,9 @@ export default {
  
         },
         grid: {
-          left: '18%',
+          // left: '14%',
           right: '8%',
+          // right: this.$store.state.common.sidebarFold ? '8%' : '18%',
           // bottom:'28%'
         },
         series: [{
@@ -705,8 +718,8 @@ export default {
         }]
       };
 
-      this.chartjxqx = echarts.init(document.getElementById("xsxwchart"));
-      this.chartjxqx.setOption(option,true);
+      this.chartxsxw = echarts.init(document.getElementById("xsxwchart"));
+      this.chartxsxw.setOption(this.xsxwoption,true);
       window.addEventListener("resize", () => {
         this.chartjxqx.resize();
       });
@@ -714,7 +727,7 @@ export default {
 
     // 教师行为分析
     initChartjsxw(){
-      var option = {
+      this.jsxwoption = {
         title:{
           text: '教师行为分析',  
           textStyle: {
@@ -768,8 +781,9 @@ export default {
           
         },
         grid: {
-          left: '18%',
+          left: '15%',
           right: '8%',
+          // right: this.$store.state.common.sidebarFold ? '8%' : '18%',
           // bottom:'28%'
         },
         series: [{
@@ -785,8 +799,23 @@ export default {
         }]
       };
 
-      this.chartjxqx = echarts.init(document.getElementById("jsxwchart"));
-      this.chartjxqx.setOption(option,true);
+      this.chartjsxw = echarts.init(document.getElementById("jsxwchart"));
+      this.chartjsxw.setOption(this.jsxwoption,true);
+
+      // document.getElementById("menu-left").addEventListener("click", () => {
+      //   console.log("sss222")
+      //   let nav_open = this.$store.state.common.sidebarFold
+      //   // 收起
+      //   if (nav_open) {
+      //     option.grid.right = "8%"
+      //   } 
+      //   // 展开
+      //   else {
+      //     option.grid.right = "18%"
+      //   }
+      //   this.chartjsxw.setOption(option,true);
+      // })
+
       window.addEventListener("resize", () => {
         this.chartjxqx.resize();
       });
@@ -795,7 +824,7 @@ export default {
     // 教学情绪
     initChartjxqx(){
       // 指定图表的配置项和数据
-      var option = {
+      this.jxqxoption = {
         title:{
           text: '教师情绪状态',  
           textStyle: {
@@ -848,7 +877,7 @@ export default {
       };
 
       this.chartjxqx = echarts.init(document.getElementById("jxqxchart"));
-      this.chartjxqx.setOption(option,true);
+      this.chartjxqx.setOption(this.jxqxoption,true);
       window.addEventListener("resize", () => {
         this.chartjxqx.resize();
       });
@@ -856,7 +885,7 @@ export default {
 
     // 教学情绪折线图
     initChartjxqxline(){
-      var option = {
+      this.jxqxlineoption = {
         title:{
           text: '教师情绪状态趋势',  
           textStyle: {
@@ -933,8 +962,9 @@ export default {
           
         },
         grid: {
-          left: '18%',
+          left: '15%',
           right: '8%',
+          // right: this.$store.state.common.sidebarFold ? '8%' : '18%',
           bottom:'38%'
         },
         series: [
@@ -966,15 +996,15 @@ export default {
       };
 
       this.chartjxqxline = echarts.init(document.getElementById("jxqxlinechart"));
-      this.chartjxqxline.setOption(option,true);
-      window.addEventListener("resize", () => {
-        this.chartjxqxline.resize();
-      });
+      this.chartjxqxline.setOption(this.jxqxlineoption,true);
+      // window.addEventListener("resize", () => {
+      //   this.chartjxqxline.resize();
+      // });
     },
 
     // 教学状态
     initChartjxzt(){
-      var option = {
+      this.jxztoption = {
         title: {
             text: '教学状态评估',
             textStyle: {
@@ -1030,8 +1060,8 @@ export default {
         }]
       };
 
-      this.chartjxqx = echarts.init(document.getElementById("jxztchart"));
-      this.chartjxqx.setOption(option,true);
+      this.chartjxzt = echarts.init(document.getElementById("jxztchart"));
+      this.chartjxzt.setOption(this.jxztoption,true);
       window.addEventListener("resize", () => {
         this.chartjxqx.resize();
       });
@@ -1039,7 +1069,7 @@ export default {
 
     // 教学状态折线图
     initChartjxztline(){
-      var option = {
+      this.jxztlineoption = {
         title: {
             text: '教学状态综合得分趋势',
             textStyle: {
@@ -1091,8 +1121,9 @@ export default {
           
         },
         grid: {
-          left: '18%',
+          left: '15%',
           right: '8%',
+          // right: this.$store.state.common.sidebarFold ? '8%' : '18%',
           bottom:'28%'
         },
         tooltip: {
@@ -1116,8 +1147,8 @@ export default {
         }]
       };
 
-      this.chartjxqx = echarts.init(document.getElementById("jxztchartline"));
-      this.chartjxqx.setOption(option,true);
+      this.chartjxztline = echarts.init(document.getElementById("jxztchartline"));
+      this.chartjxztline.setOption(this.jxztlineoption,true);
       window.addEventListener("resize", () => {
         this.chartjxqx.resize();
       });
@@ -1151,6 +1182,44 @@ export default {
         this.deptList = treeDataTranslate(data.deptList, "deptId");
         this.getTeacherList(this.dataForm.deptId);
       });
+      // 绑定事件
+      document.getElementById("menu-left").addEventListener("click", () => {
+        console.log("sss222")
+        if (this.show) {
+          let nav_open = this.$store.state.common.sidebarFold
+          // 收起
+          if (nav_open) {
+            // this.rtchoption.grid.right = '12%'
+            this.ssxwoption.grid.right = "8%"
+            this.xsxwoption.grid.right = "8%"
+            this.jsxwoption.grid.right = "8%"
+            // this.jxqxoption.grid.right = "8%"
+            this.jxqxlineoption.grid.right = "8%"
+            // this.jxztoption.grid.right = "8%"
+            this.jxztlineoption.grid.right = "8%"
+          } 
+          // 展开
+          else {
+            // this.rtchoption.grid.right = '20%'
+            this.ssxwoption.grid.right = "18%"
+            this.xsxwoption.grid.right = "18%"
+            this.jsxwoption.grid.right = "18%"
+            // this.jxqxoption.grid.right = "18%"
+            this.jxqxlineoption.grid.right = "18%"
+            // this.jxztoption.grid.right = "18%"
+            this.jxztlineoption.grid.right = "18%"
+          }
+          this.chartrtch.setOption(this.rtchoption,true);
+          this.chartssxw.setOption(this.ssxwoption,true);
+          this.chartxsxw.setOption(this.xsxwoption,true);
+          this.chartjsxw.setOption(this.jsxwoption,true);
+          this.chartjxqx.setOption(this.jxqxoption,true);
+          this.chartjxqxline.setOption(this.jxqxlineoption,true);
+          this.chartjxzt.setOption(this.jxztoption,true);
+          this.chartjxztline.setOption(this.jxztlineoption,true);
+        }
+        
+      })
     },
     changedatetype(e) {
       this.radio3 = e;
@@ -1224,7 +1293,7 @@ export default {
   background-color: #30345C;
   border-right: 2px solid rgb(66, 69, 98);
   padding-top: 20px;
-  padding-left: 10px;
+  // padding-left: 10px;
   .jxms-img{
     width: 70px;
     height: 70px;
