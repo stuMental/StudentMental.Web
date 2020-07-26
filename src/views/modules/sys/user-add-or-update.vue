@@ -11,10 +11,10 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="80px"
     >
-      <el-form-item label="用户名" prop="userName">
+      <el-form-item label="用户名" prop="userName" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.userName" placeholder="登录帐号"></el-input>
       </el-form-item>
-      <el-form-item label="姓名" prop="name">
+      <el-form-item label="姓名" prop="name" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.name" placeholder="姓名"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password" :class="{ 'is-required': !dataForm.id }">
@@ -29,7 +29,7 @@
       <el-form-item label="手机号" prop="mobile">
         <el-input v-model="dataForm.mobile" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-form-item label="班年级" prop="deptName">
+      <el-form-item label="班年级" prop="deptName" :class="{ 'is-required': !dataForm.id }">
         <el-popover ref="deptListPopover" placement="bottom-start" trigger="click">
           <el-tree
             :data="deptList"
@@ -66,8 +66,15 @@
         </el-radio-group>
       </el-form-item>
     </el-form>
+    <el-row>
+      <el-tabs>
+        <el-tab-pane label="标准照信息">
+          <studentpho ref="Studentpho" :username="dataForm.userName" @studentpho="studentphohange"></studentpho>
+        </el-tab-pane>
+      </el-tabs>
+    </el-row>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
+      <el-button @click="cancle()">取消</el-button>
       <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
     </span>
   </el-dialog>
@@ -76,8 +83,24 @@
 <script>
 import { treeDataTranslate } from "@/utils";
 import { isEmail, isMobile } from "@/utils/validate";
+import studentpho from "./studentpho";
+
 export default {
   data() {
+    var validateName = (rule, value, callback) => {
+      if (!this.dataForm.name && !/\S/.test(value)) {
+        callback(new Error("姓名不能为空"));
+      } else {
+        callback();
+      }
+    };
+    var validateUserName = (rule, value, callback) => {
+      if (!this.dataForm.userName && !/\S/.test(value)) {
+        callback(new Error("用户名不能为空"));
+      } else {
+        callback();
+      }
+    };
     var validatePassword = (rule, value, callback) => {
       if (!this.dataForm.id && !/\S/.test(value)) {
         callback(new Error("密码不能为空"));
@@ -108,6 +131,13 @@ export default {
         callback();
       }
     };
+    var validateDeptName = (rule, value, callback) => {
+      if (!this.dataForm.deptName && !/\S/.test(value)) {
+        callback(new Error("部门不能为空"));
+      } else {
+        callback();
+      }
+    };
     return {
       visible: false,
       roleList: [],
@@ -131,30 +161,50 @@ export default {
         children: "children"
       },
       dataRule: {
-        userName: [
-          { required: true, message: "用户名不能为空", trigger: "blur" }
-        ], name: [
-          { required: true, message: "姓名不能为空", trigger: "blur" }
-        ],
+        userName: [{ validator: validateUserName, trigger: "blur" }],
+        name: [{ validator: validateName, trigger: "blur" }],
         password: [{ validator: validatePassword, trigger: "blur" }],
         comfirmPassword: [
           { validator: validateComfirmPassword, trigger: "blur" }
         ],
-        // email: [
-        //   { required: true, message: "邮箱不能为空", trigger: "blur" },
-        //   { validator: validateEmail, trigger: "blur" }
-        // ],
-        // mobile: [
-        //   { required: true, message: "手机号不能为空", trigger: "blur" },
-        //   { validator: validateMobile, trigger: "blur" }
-        // ],
-        deptName: [{ required: true, message: "部门不能为空", trigger: "blur" }]
-      }
+        deptName: [{ validator: validateDeptName, trigger: "blur" }]
+      },
+      studentphodata: [],
     };
   },
+  components: {
+    studentpho
+  },
   methods: {
-    init(id) {
+    cancle() {
+      this.visible = false;
+      this.$refs["dataForm"].resetFields();
+      this.$refs["Studentpho"].fileList = []
+    },
+    studentphohange(data) {
+      this.studentphodata = [];
+      data.forEach(element => {
+        var values = {
+          studentNumber: this.dataForm.studentNumber,
+          imageId: element
+        };
+        this.studentphodata.push(values);
+      });
+      //console.log(this.studentphodata)
+    },
+    init(id, username) {
       this.dataForm.id = id || 0;
+      this.dataForm.userName = username || '';
+      // console.log("liuxxx", this.dataForm.id, this.dataForm.userName)
+      this.visible = true;
+      this.$nextTick(() => {
+        setTimeout(() => {
+          // console.log(this.$refs)
+          // console.log(this.$refs.Studentpho)
+          this.$refs.Studentpho.init(username)
+        }, 50)
+      });
+      
       this.$http({
         url: this.$http.adornUrl("/sys/dept/select"),
         method: "get",
@@ -258,16 +308,19 @@ export default {
             ),
             method: "post",
             data: this.$http.adornData({
-              userId: this.dataForm.id || undefined,
-              username: this.dataForm.userName,
-              name: this.dataForm.name,
-              password: this.dataForm.password,
-              salt: this.dataForm.salt,
-              email: this.dataForm.email,
-              mobile: this.dataForm.mobile,
-              status: this.dataForm.status,
-              roleIdList: this.dataForm.roleIdList,
-              deptId: this.dataForm.deptId
+              userInfo: {
+                userId: this.dataForm.id || undefined,
+                username: this.dataForm.userName,
+                name: this.dataForm.name,
+                password: this.dataForm.password,
+                salt: this.dataForm.salt,
+                email: this.dataForm.email,
+                mobile: this.dataForm.mobile,
+                status: this.dataForm.status,
+                roleIdList: this.dataForm.roleIdList,
+                deptId: this.dataForm.deptId,
+              },
+              studentphodata: this.studentphodata,
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
