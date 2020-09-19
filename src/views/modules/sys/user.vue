@@ -83,8 +83,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.userId)">修改</el-button>
-          <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId)">删除</el-button>
+          <el-button v-if="isAuth('sys:user:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.userId, scope.row.username)">修改</el-button>
+          <el-button v-if="isAuth('sys:user:delete')" type="text" size="small" @click="deleteHandle(scope.row.userId, scope.row.username)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -164,14 +164,14 @@
         this.dataListSelections = val
       },
       // 新增 / 修改
-      addOrUpdateHandle (id) {
+      addOrUpdateHandle (id, username) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
+          this.$refs.addOrUpdate.init(id, username)
         })
       },
       // 删除
-      deleteHandle (id) {
+      deleteHandle (id, username) {
         var userIds = id ? [id] : this.dataListSelections.map(item => {
           return item.userId
         })
@@ -183,7 +183,7 @@
           this.$http({
             url: this.$http.adornUrl('/sys/user/delete'),
             method: 'post',
-            data: this.$http.adornData(userIds, false)
+            data: this.$http.adornData( userIds, false)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({

@@ -39,17 +39,7 @@
           <div id="rjzl" class="chart-box"></div>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="10" :offset="2">
-          <div id="xkxq" class="chart-box" style="height:321px;border-top-color: #424562; border-top-width: 2px; border-top-style: solid;"></div>
-        </el-col>
-        <el-col :span="10">
-          <div class="title">校园安全预警&nbsp;<img src="~@/assets/img/xyyjico.png" /></div>
-          <el-table :data="yjData" class="tabless" height="279" border :header-cell-style="tableheaderCellStyle" :cell-style="tableCellStyles">
-            <el-table-column v-for="col in yjcols" :key="col.prop" :prop="col.prop" :label="col.label"></el-table-column>
-          </el-table>
-        </el-col>
-      </el-row>
+      <!-- 第二行 -->
       <el-row :gutter="20">
         <el-col :span="10" :offset="2" style="padding-right:0px">
           <div class="title">
@@ -57,15 +47,12 @@
           </div>
           <div id="qxhistory" class="chart-box" style="border-right-color: #424562; border-right-width: 2px; border-right-style: solid;
             border-bottom-color:#424562; border-bottom-width: 2px; border-bottom-style: solid;"></div>
-          <div id="zthistory" class="chart-box"></div>
+          <div id="zthistory" class="chart-box" style="border-right: 2px solid #424562;"></div>
         </el-col>
         <el-col :span="10" style="padding-left: 0px;">
-          <div class="title" style="height:25px"></div>
-          <div id="jshistory" class="chart-box"></div>
-          <div  class="title" style="margin-left:20px; visibility:hidden">今日考勤&nbsp;<img src="~@/assets/img/jrkqico.png" /></div>
-          <el-table :data="tableData" class="tabless" height="243" style="visibility:hidden;padding-left:10px;background-color:inherit" border :header-cell-style="tableheaderCellStyle" :cell-style="tableCellStyles" :header-row-style="tableheaderCellStyles">
-            <el-table-column v-for="col in cols" :key="col.prop" :prop="col.prop" :label="col.label"></el-table-column>
-          </el-table>
+          <div class="title" style="height:24px"></div>
+          <div id="jshistory" class="chart-box" style="border-bottom: 2px solid #424562;"></div>
+          <div id="xkxq" class="chart-box"></div>
         </el-col>
       </el-row>
       <el-row :gutter="20" style="height:50px">
@@ -678,8 +665,10 @@ export default {
       var option = {
         title: {
           text: "-学科兴趣分布-",
-          left: "right",
-          top: "bottom",
+          // left: "right",
+          // top: "bottom",
+          bottom: "15%",
+          right: "1%",
           backgroundColor: "#212858",
           textStyle: {
             color: "#ffffff",
@@ -694,9 +683,10 @@ export default {
           }
         },
         grid: {
+          top: "15",
           left: "3%",
           right: "20%",
-          bottom: "3%",
+          bottom: "10%",
           containLabel: true
         },
         xAxis: {

@@ -94,4 +94,14 @@ body {
   /deep/ .el-tree-node:focus > .el-tree-node__content {
     background-color: #0c1352;
   }
+
+  /deep/ .el-date-range-picker__header {
+    color: #f5f5f5;
+  }
+  /deep/ .el-date-range-picker table {
+    color: #f5f5f5;
+  }
+  /deep/ .el-date-table th, .el-date-table td {
+    color: #f5f5f5;
+  }
 }
