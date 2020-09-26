@@ -365,6 +365,7 @@ export default {
           if(rtch && rtch[0]){
             this.rt = rtch[0].rt
             this.ch = rtch[0].ch
+            this.rtchData = []
             this.rtchData.push([rtch[0].rt, rtch[0].ch]);
             this.initChartrtch()
           }
@@ -374,6 +375,7 @@ export default {
             let x = 0
             let y = 0
             let cnt = 1
+            this.ssxwData = []
             this.ssxwData.push([0, 0])
             ssxw.forEach((v, i) => {
               // 从第二个开始
@@ -399,7 +401,8 @@ export default {
           }
           // 学生行为分析
           let xsxw = data.data.xsxw
-            if(xsxw.length != 0){
+          if(xsxw.length != 0){
+            this.xsxwData = []
             xsxw.forEach((v, i) => {
               this.xsxwData.push([v.action, v.percentage * 100])
             })
@@ -407,7 +410,8 @@ export default {
           }
           // 教师行为分析
           let jsxw = data.data.jsxw
-            if(jsxw.length != 0){
+          if(jsxw.length != 0){
+            this.jsxwData = []
             jsxw.forEach((v, i) => {
               this.jsxwData.push([v.action, v.percentage * 100])
             })
