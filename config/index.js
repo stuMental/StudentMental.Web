@@ -1,91 +1,97 @@
-'use strict'
-// Template version: 1.2.5
-// see http://vuejs-templates.github.io/webpack for documentation.
+/**
+ * 生产环境
+ */
+;(function () {
+  window.SITE_CONFIG = {};
 
-const path = require('path')
-const devEnv = require('./dev.env')
+  // api接口请求地址
+  window.SITE_CONFIG['baseUrl'] = '/student_service';
 
-module.exports = {
-  dev: {
+  // cdn地址 = 域名 + 版本号
+  window.SITE_CONFIG['domain']  = './'; // 域名
+  window.SITE_CONFIG['version'] = '2009261534';   // 版本号(年月日时分)
+  window.SITE_CONFIG['cdnUrl']  = window.SITE_CONFIG.domain + window.SITE_CONFIG.version;
+})();
 
-    // Paths
-    assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-    // 代理列表, 是否开启代理通过[./dev.env.js]配置
-    proxyTable: devEnv.OPEN_PROXY === false ? {} : {
-      '/proxyApi': {
-        target: 'http://localhost:80/student_service',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/proxyApi': '/'
-        }
+/**
+ * 动态加载初始资源
+ */
+;(function() {
+  var resList = {
+    icon: window.SITE_CONFIG.cdnUrl + '/static/img/favicon.ico',
+    css: [
+      window.SITE_CONFIG.cdnUrl + '/static/css/app.css',
+    ],
+    js: [
+      // 插件, 放置业务之前加载, 以免业务需求依赖插件时, 还未加载出错
+      // 插件 - echarts
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/echarts-3.8.5/echarts.common.min.js',
+      // 插件 - ueditor
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/ueditor-1.4.3.3/ueditor.config.js',
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/ueditor-1.4.3.3/ueditor.all.min.js',
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/ueditor-1.4.3.3/lang/zh-cn/zh-cn.js',
+      // 业务
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/jquery.min.js',
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/jquery.ui.touch-punch.min.js',
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/jquery-ui.min.js',
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/monitor.js',
+      window.SITE_CONFIG.cdnUrl + '/static/plugins/jwmeyy.js',
+      window.SITE_CONFIG.cdnUrl + '/static/js/manifest.js',
+      window.SITE_CONFIG.cdnUrl + '/static/js/vendor.js',
+      window.SITE_CONFIG.cdnUrl + '/static/js/app.js'
+
+    ]
+  };
+
+  // 图标
+  (function () {
+    var _icon = document.createElement('link');
+    _icon.setAttribute('rel', 'shortcut icon');
+    _icon.setAttribute('type', 'image/x-icon');
+    _icon.setAttribute('href', resList.icon);
+    document.getElementsByTagName('head')[0].appendChild(_icon);
+  })();
+
+  // 样式
+  (function () {
+    document.getElementsByTagName('html')[0].style.opacity = 0;
+    var i = 0;
+    var _style = null;
+    var createStyles = function () {
+      if (i >= resList.css.length) {
+        document.getElementsByTagName('html')[0].style.opacity = 1;
+        return;
       }
-    },
+      _style = document.createElement('link');
+      _style.href = resList.css[i];
+      _style.setAttribute('rel', 'stylesheet');
+      _style.onload = function () {
+        i++;
+        createStyles();
+      }
+      document.getElementsByTagName('head')[0].appendChild(_style);
+    }
+    createStyles();
+  })();
 
-    // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8001, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    autoOpenBrowser: true,
-    errorOverlay: true,
-    notifyOnErrors: true,
-    poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
-
-    // Use Eslint Loader?
-    // If true, your code will be linted during bundling and
-    // linting errors and warnings will be shown in the console.
-    useEslint: false,
-    // If true, eslint errors and warnings will also be shown in the error overlay
-    // in the browser.
-    showEslintErrorsInOverlay: false,
-
-    /**
-     * Source Maps
-     */
-
-    // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'eval-source-map',
-
-    // If you have problems debugging vue-files in devtools,
-    // set this to false - it *may* help
-    // https://vue-loader.vuejs.org/en/options.html#cachebusting
-    cacheBusting: true,
-
-    // CSS Sourcemaps off by default because relative paths are "buggy"
-    // with this option, according to the CSS-Loader README
-    // (https://github.com/webpack/css-loader#sourcemaps)
-    // In our experience, they generally work as expected,
-    // just be aware of this issue when enabling this option.
-    cssSourceMap: false,
-  },
-
-  build: {
-    // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
-
-    // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: './',
-
-    /**
-     * Source Maps
-     */
-
-    productionSourceMap: false,
-    // https://webpack.js.org/configuration/devtool/#production
-    devtool: '#source-map',
-
-    // Gzip off by default as many popular static hosts such as
-    // Surge or Netlify already gzip all static assets for you.
-    // Before setting to `true`, make sure to:
-    // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
-    productionGzipExtensions: ['js', 'css'],
-
-    // Run the build command with an extra argument to
-    // View the bundle analyzer report after build finishes:
-    // `npm run build --report`
-    // Set to `true` or `false` to always turn it on or off
-    bundleAnalyzerReport: process.env.npm_config_report
-  }
-}
+  // 脚本
+  document.onreadystatechange = function () {
+    if (document.readyState === 'interactive') {
+      var i = 0;
+      var _script = null;
+      var createScripts = function () {
+        if (i >= resList.js.length) {
+          return;
+        }
+        _script = document.createElement('script');
+        _script.src = resList.js[i];
+        _script.onload = function () {
+          i++;
+          createScripts();
+        }
+        document.getElementsByTagName('body')[0].appendChild(_script);
+      }
+      createScripts();
+    }
+  };
+})();
