@@ -281,6 +281,19 @@ export default {
     }
   },
   methods: {
+    randomNum(minNum,maxNum){ 
+      switch(arguments.length){ 
+        case 1: 
+            return parseInt(Math.random()*minNum+1,10); 
+        break; 
+        case 2: 
+            return parseInt(Math.random()*(maxNum-minNum+1)+minNum,10); 
+        break; 
+            default: 
+                return 0; 
+            break; 
+      } 
+    },
     getcourse(deptid, teacherid) {
       this.$http({
         url: this.$http.adornUrl("/datacenter/StudentCourseInfo/getCourseByTeacher"),
@@ -371,7 +384,22 @@ export default {
           }
           // 师生行为序列图
           let ssxw = data.data.ssxw
+          // console.log('old_ssxw: ', ssxw)
           if(ssxw.length != 0){
+            // 抽样
+            let ssxwtmp = []
+            if(ssxw.length > 90 && ssxw.length < 180) {
+              ssxwtmp = ssxw.slice(0, 90)
+              ssxw = ssxwtmp
+            } else if (ssxw.length >= 180) {
+              let interval = Math.ceil(ssxw.length / 90)
+              for (let i = 0; i < ssxw.length; i += interval) {
+                ssxwtmp.push(ssxw[i])
+              }
+              ssxw = ssxwtmp
+            }
+            // console.log('tmp: ', ssxwtmp)
+            // console.log('new_ssxw: ', ssxw)
             let x = 0
             let y = 0
             let cnt = 1
@@ -389,7 +417,7 @@ export default {
                     y += cnt
                   }
                   cnt = 1
-                  this.ssxwData.push([x, y])
+                  this.ssxwData.push([y, x])
                 }
                 else{
                   cnt += 1
