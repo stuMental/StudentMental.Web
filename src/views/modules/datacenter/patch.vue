@@ -7,7 +7,7 @@
             </el-col>
             <el-col :span="12" class="download">
                 <a :href="zip" id="download">导入模板下载</a>
-                <el-upload drag :action="url" :before-upload="beforeUploadHandle" :on-success="successHandle" multiple :file-list="fileList" style="text-align: center;margin-left: 25%;width: 50%;">
+                <el-upload drag :action="url" :data=fileType :before-upload="beforeUploadHandle" :on-success="successHandle" multiple :file-list="fileList" style="text-align: center;margin-left: 25%;width: 50%;">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或
                     <em>点击上传</em>
@@ -48,6 +48,11 @@ export default {
         return {
             zip: window.SITE_CONFIG.cdnUrl + "/static/zip/batch.zip",
             url: "",
+            // fileType: {tablename: "dept"}
+            // fileType: {tablename: "camera"}
+            // fileType: {tablename: "courseName"}
+            // fileType: {tablename: "teacher"}
+            fileType: {tablename: "student"}
         }
     },
     mounted() {
