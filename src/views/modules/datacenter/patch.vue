@@ -7,22 +7,16 @@
             </el-col>
             <el-col :span="12" class="download">
                 <a :href="zip" id="download">导入模板下载</a>
-                <el-upload drag :action="url" :data=fileType :before-upload="beforeUploadHandle" :on-success="successHandle" multiple :file-list="fileList" style="text-align: center;margin-left: 25%;width: 50%;">
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或
-                    <em>点击上传</em>
-                    </div>
-                    <div class="el-upload__tip" slot="tip">只支持xls、xlsx格式！</div>
-                </el-upload>
             </el-col>
         </el-row>
         <!-- 流程图 -->
         <div class="flow">
-            <div class="box classroom">班年级导入</div>
-            <div class="box teacher">教师导入</div>
-            <div class="box camera">摄像头与教室关系导入</div>
-            <div class="box course">课程名称导入</div>
-            <div class="box student">学生信息与照片导入</div>
+            <div class="box classroom" @click="openDia('dept')">班年级导入</div>
+            <div class="box teacher" @click="openDia('teacher')">教师导入</div>
+            <div class="box camera" @click="openDia('camera')">摄像头与教室关系导入</div>
+            <div class="box course" @click="openDia('courseName')">课程名称导入</div>
+            <div class="box student" @click="openDia('student')">学生信息导入</div>
+            <div class="box studentImage" @click="openDia('studentImage')">学生照片导入</div>
             <div class="box course_time">课程时间创建（手动）</div>
             <div class="box course_info">课程信息创建（手动）</div>
             <div class="line1"></div>
@@ -31,6 +25,7 @@
             <div class="line4"></div>
             <div class="line5"></div>
             <div class="line6"></div>
+            <div class="line7"></div>
         </div>
         <!-- 注意事项 -->
         <div class="note">
@@ -39,6 +34,26 @@
             <p>2.学生信息以及学生照片的批量导入在学生管理页面由各个班级的班主任操作导入完成，此页面流程图中为跳转链接。</p>
             <p>3.课程信息由各个班级的班主任在课程管理页面手动创建完成，此页面流程图中为跳转链接。</p>
         </div>
+        <!-- 文件上传对话框 -->
+        <el-dialog :visible.sync="dialogFormVisible">
+            <el-upload drag :action="url" :data=fileType :before-upload="beforeUploadHandle" :on-success="successHandle" multiple :file-list="fileList" style="text-align: center;margin-left: 25%;width: 50%;">
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或
+                <em>点击上传</em>
+                </div>
+                <div class="el-upload__tip" slot="tip">只支持xls、xlsx格式！</div>
+            </el-upload>
+        </el-dialog>
+        <!-- 学生照片上传对话框 -->
+        <el-dialog :visible.sync="dialogImageVisible">
+            <el-upload drag :action="imageUrl" list-type="picture" :data=fileType :before-upload="imageBeforeUploadHandle" :on-success="successHandle" multiple :file-list="fileList" style="text-align: center;margin-left: 25%;width: 50%;">
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将照片拖到此处，或
+                <em>点击上传</em>
+                </div>
+                <div class="el-upload__tip" slot="tip">只支持jpg、png格式！</div>
+            </el-upload>
+        </el-dialog>
     </div>
 </template>
 
@@ -46,27 +61,43 @@
 export default {
     data () {
         return {
+            dialogFormVisible: false,
+            dialogImageVisible: false,
             zip: window.SITE_CONFIG.cdnUrl + "/static/zip/batch.zip",
             url: "",
+            imageUrl : "",
             // fileType: {tablename: "dept"}
             // fileType: {tablename: "camera"}
             // fileType: {tablename: "courseName"}
             // fileType: {tablename: "teacher"}
-            fileType: {tablename: "student"}
+            fileType: {tablename: ""},
+            fileList: []
         }
     },
     mounted() {
         this.init();
     },
     methods: {
+        openDia(type) {
+            if(type == "studentImage"){
+                this.dialogImageVisible = true
+            } else {
+                this.dialogFormVisible = true               
+            }
+            this.fileType.tablename = type
+        },
         init() {
             this.url = this.$http.adornUrl(
                 `/report/uploadlocal/?token=${this.$cookie.get("token")}`
+            );
+            this.imageUrl = this.$http.adornUrl(
+                `/report/uploadImage/?token=${this.$cookie.get("token")}`
             );
         },
         // 上传之前
         beforeUploadHandle(file) {
             if (
+                file.
                 file.type !== "application/vnd.ms-excel" &&
                 file.type !==
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -75,6 +106,18 @@ export default {
                 return false;
             }
             this.num++;
+        },
+        // 学生照片上传之前检查
+        imageBeforeUploadHandle(file) {
+            // if (
+            //     file.type !== "application/vnd." &&
+            //     file.type !==
+            //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            // ) {
+            //     this.$message.error("只支持xls、xlsx格式！");
+            //     return false;
+            // }
+            // this.num++;
         },
         // 上传成功
         successHandle(response, file, fileList) {
@@ -133,6 +176,10 @@ export default {
     .student {
         top: 75px;
         left: 570px;
+    }
+    .studentImage {
+        top: 75px;
+        left: 850px;
     }
     .course_time {
         top: 325px;
@@ -196,6 +243,15 @@ export default {
         position: absolute;
         top: 225px;
         left: 735px;  
+    }
+    .line7 {
+        background: url(../../../assets/img/line2.png) no-repeat;
+        background-size: contain;
+        width: 118px;
+        height: 118px;
+        position: absolute;
+        top: 82px;
+        left: 730px;  
     }
     .note {
         font-size: 14px;
